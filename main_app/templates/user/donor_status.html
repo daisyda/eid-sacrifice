@@ -14,7 +14,7 @@
     .timeline-container {
         background-color: #fff;
         padding: 70px 60px; /* increased padding */
-        border-radius: 30px; /* slightly larger curve */
+        border-radius: 30px;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         margin-top: 80px;
         max-width: 1600px;
@@ -43,6 +43,7 @@
         position: relative;
         padding-top: 30px;
         margin-top: 60px;
+        gap: 20px; /* added for spacing */
     }
     .timeline::before {
         content: '';
@@ -50,8 +51,8 @@
         top: 40px;
         right: 0;
         left: 0;
-        height: 4px;
-        background-color: #e0b300;
+        height: 6px; /* was 4px */
+        background-color: #a97400; /* darker gold */
         z-index: 0;
     }
     .step {
@@ -61,22 +62,23 @@
         z-index: 1;
     }
     .circle {
-        width: 24px;
-        height: 24px;
+        width: 32px; /* was 24px */
+        height: 32px;
         background-color: #ccc;
         border-radius: 50%;
-        margin: 0 auto 10px;
+        margin: 0 auto 12px;
     }
     .step.active .circle {
         background-color: #7c0a27;
     }
     .label {
+        font-size: 16px; /* clearer */
         font-weight: bold;
-        color: #333;
+        color: #111; /* more contrast */
     }
     .subtext {
-        font-size: 14px;
-        color: #666;
+        font-size: 15px; /* was 14px */
+        color: #444;
     }
     .back-link {
         margin-top: 30px;
