@@ -14,7 +14,7 @@ def donor_status(request):
     udhiyah_id = request.GET.get('udhiyah_id')
     phone = request.GET.get('phone')
 
-    record = Udhiyah.objects.filter(id=udhiyah_id, phone=phone).first()
+    record = Udhiyah.objects.filter(id=udhiyah_id, phone_number=phone).first()
     if not record:
         return render(request, 'user/donor_status.html', {'status': 'not_found'})
 
