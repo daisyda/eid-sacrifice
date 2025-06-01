@@ -11,9 +11,10 @@
         background-color: #fefafa;
         padding: 40px;
     }
+
     .timeline-container {
         background-color: #fff;
-        padding: 70px 60px; /* increased padding */
+        padding: 70px 60px;
         border-radius: 30px;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         margin-top: 80px;
@@ -24,6 +25,7 @@
         margin-left: auto;
         margin-right: auto;
     }
+
     .info {
         display: flex;
         justify-content: space-between;
@@ -33,53 +35,64 @@
         flex-wrap: wrap;
         gap: 20px;
     }
+
     .info p {
         margin: 0;
         white-space: nowrap;
     }
+
     .timeline {
         display: flex;
         justify-content: space-between;
         position: relative;
         padding-top: 30px;
         margin-top: 60px;
-        gap: 20px; /* added for spacing */
     }
+
     .timeline::before {
         content: '';
         position: absolute;
         top: 40px;
         right: 0;
         left: 0;
-        height: 6px; /* was 4px */
-        background-color: #a97400; /* darker gold */
+        height: 4px;
+        background-color: #e0b300;
         z-index: 0;
     }
+
     .step {
         text-align: center;
         flex: 1;
         position: relative;
         z-index: 1;
     }
+
     .circle {
-        width: 32px; /* was 24px */
-        height: 32px;
-        background-color: #ccc;
+        width: 24px;
+        height: 24px;
         border-radius: 50%;
-        margin: 0 auto 12px;
+        margin: 0 auto 10px;
+        background-color: #ccc; /* Default color for upcoming */
     }
+
+    .step.done .circle {
+        background-color: #999; /* Done step */
+    }
+
     .step.active .circle {
-        background-color: #7c0a27;
+        background-color: #7c0a27; /* Current active step */
     }
+
     .label {
-        font-size: 16px; /* clearer */
         font-weight: bold;
-        color: #111; /* more contrast */
+        color: #333;
     }
+
     .subtext {
-        font-size: 15px; /* was 14px */
-        color: #444;
+        font-size: 14px;
+        color: #666;
     }
+
     .back-link {
         margin-top: 30px;
         display: inline-block;
@@ -106,7 +119,7 @@
         <!-- Timeline -->
         <div class="timeline">
             {% for step in timeline_steps %}
-                <div class="step {% if step.active %}active{% endif %}">
+                <div class="step {{ step.status }}">
                     <div class="circle"></div>
                     <div class="label">{{ step.label }}</div>
                     <div class="subtext">

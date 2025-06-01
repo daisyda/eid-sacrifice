@@ -13,16 +13,13 @@ def donor_status(request):
     udhiyah_id = request.GET.get('udhiyah_id')
     phone = request.GET.get('phone')
 
-    # Use order_number instead of id, and fix phone_number field
     record = Udhiyah.objects.filter(order_number=udhiyah_id, phone_number=phone).first()
     if not record:
         return render(request, 'user/donor_status.html', {'status': 'not_found'})
 
     donor_name = record.name
     current_status = record.status
-
-    # Optional fallback for missing donation_type
-    donation_type = getattr(record, 'donation_type', 'full')  # default to 'full' if not defined
+    donation_type = getattr(record, 'donation_type', 'full')
 
     status_sequence = ['paid', 'booked', 'slaughtered', 'cutting']
     if donation_type == 'full':
@@ -31,21 +28,26 @@ def donor_status(request):
         status_sequence += ['half_ready', 'distributing', 'done']
 
     timeline_steps = []
-    active = True
-    for step in status_sequence:
+    current_index = status_sequence.index(current_status) if current_status in status_sequence else -1
+
+    for i, step in enumerate(status_sequence):
+        if i < current_index:
+            status = 'done'
+        elif i == current_index:
+            status = 'active'
+        else:
+            status = 'upcoming'
+
         timeline_steps.append({
             'code': step,
             'label': dict(Udhiyah._meta.get_field('status').choices).get(step, step),
-            'active': active
+            'status': status
         })
-        if step == current_status:
-            active = False
 
     return render(request, 'user/donor_status.html', {
-        'udhiyah_id': record.order_number,  # show correct field
+        'udhiyah_id': record.order_number,
         'phone': record.phone_number,
         'donor_name': donor_name,
         'status': current_status,
         'timeline_steps': timeline_steps,
     })
-
