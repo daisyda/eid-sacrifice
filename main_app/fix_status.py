@@ -1,6 +1,5 @@
 from main_app.models import Udhiyah
 
-# Arabic-to-English status code mapping
 STATUS_MAP = {
     'تم الدفع': 'paid',
     'تم حجز الأضحية': 'booked',
@@ -13,16 +12,25 @@ STATUS_MAP = {
 
 def fix_status_values():
     updated = 0
+    skipped = 0
+
     for obj in Udhiyah.objects.all():
-        arabic_status = obj.status.strip()
-        if arabic_status in STATUS_MAP:
-            obj.status = STATUS_MAP[arabic_status]
+        status_value = obj.status.strip()
+
+        # Case 1: Arabic to English mapping needed
+        if status_value in STATUS_MAP:
+            obj.status = STATUS_MAP[status_value]
             obj.save()
             updated += 1
             print(f"✅ Updated ID {obj.id} to: {obj.status}")
-        else:
-            print(f"⚠️ Skipped ID {obj.id}: Unknown status '{arabic_status}'")
-    print(f"\n🎉 Done. Total updated: {updated}")
 
-if __name__ == "__main__":
-    fix_status_values()
+        # Case 2: Already correct English status
+        elif status_value in STATUS_MAP.values():
+            skipped += 1
+            print(f"ℹ️ Already correct ID {obj.id}: {status_value}")
+
+        # Case 3: Unknown value
+        else:
+            print(f"⚠️ Skipped ID {obj.id}: Unknown status '{status_value}'")
+
+    print(f"\n🎉 Done. Updated: {updated}, Already correct: {skipped}")
