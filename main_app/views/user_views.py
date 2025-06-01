@@ -9,21 +9,23 @@ from ..models import Udhiyah, STATUS_CHOICES
 def donor_search(request):
     return render(request, 'user/donor_search.html')
 
-
 def donor_status(request):
     udhiyah_id = request.GET.get('udhiyah_id')
     phone = request.GET.get('phone')
 
-    record = Udhiyah.objects.filter(id=udhiyah_id, phone_number=phone).first()
+    # Use order_number instead of id, and fix phone_number field
+    record = Udhiyah.objects.filter(order_number=udhiyah_id, phone_number=phone).first()
     if not record:
         return render(request, 'user/donor_status.html', {'status': 'not_found'})
 
     donor_name = record.name
     current_status = record.status
 
-    status_sequence = ['paid', 'booked', 'slaughtered', 'cutting']
+    # Optional fallback for missing donation_type
+    donation_type = getattr(record, 'donation_type', 'full')  # default to 'full' if not defined
 
-    if record.donation_type == 'full':
+    status_sequence = ['paid', 'booked', 'slaughtered', 'cutting']
+    if donation_type == 'full':
         status_sequence += ['distributing', 'done']
     else:
         status_sequence += ['half_ready', 'distributing', 'done']
@@ -40,11 +42,10 @@ def donor_status(request):
             active = False
 
     return render(request, 'user/donor_status.html', {
-        'udhiyah_id': record.id,
-        'phone': record.phone,
+        'udhiyah_id': record.order_number,  # show correct field
+        'phone': record.phone_number,
         'donor_name': donor_name,
         'status': current_status,
         'timeline_steps': timeline_steps,
     })
-
 
