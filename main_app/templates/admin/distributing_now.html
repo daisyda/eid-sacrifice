@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>الأضاحي - جاري التوزيع</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f4f5;
+      padding: 50px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background-color: white;
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 800px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+
+    .numbers {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-top: 10px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background-color: #f4e9cc;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    input[type="checkbox"]:disabled + span {
+      color: #888;
+      text-decoration: line-through;
+    }
+
+    .buttons {
+      margin-top: 40px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 10px 30px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn.update {
+      background-color: #8b1538;
+      color: white;
+    }
+
+    .btn.back {
+      background-color: #ede2c5;
+      color: black;
+    }
+
+    #status-message {
+      margin-top: 20px;
+      font-size: 16px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>الأضاحي - جاري التوزيع</h2>
+    <hr>
+
+    <div id="sacrifice-sections">جاري تحميل الأرقام...</div>
+
+    <div class="buttons">
+      <button class="btn update" onclick="updateStatus()">تحديث</button>
+      <button class="btn back" onclick="goBack()">عودة إلى صفحة الحالات</button>
+    </div>
+
+    <div id="status-message"></div>
+  </div>
+
+  <script>
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+
+    async function createSections() {
+      const status = "جاري التوزيع";
+      localStorage.setItem("selectedStatus", status);
+
+      const response = await fetch('/api/numbers/?status=' + status);
+      const data = await response.json();
+
+      const container = document.getElementById("sacrifice-sections");
+      container.innerHTML = "";
+
+      if (!data.numbers || data.numbers.length === 0) {
+        container.innerHTML = "لا توجد أضاحي لهذه الحالة.";
+        return;
+      }
+
+      const selectedNumbers = data.selected_numbers || [];
+
+      const grouped = { "100": [], "200": [], "300": [] };
+      data.numbers.forEach(num => {
+        const group = Math.floor(num / 100) * 100;
+        if (group === 100 || group === 200 || group === 300) {
+          grouped[group].push(num);
+        }
+      });
+
+      Object.entries(grouped).forEach(([group, nums]) => {
+        if (nums.length > 0) {
+          const section = document.createElement("div");
+          section.className = "section";
+
+          const title = document.createElement("h3");
+          title.textContent = group;
+          section.appendChild(title);
+
+          const wrapper = document.createElement("div");
+          wrapper.className = "numbers";
+
+          nums.forEach(num => {
+            const label = document.createElement("label");
+            label.className = "checkbox-label";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = num;
+
+            const span = document.createElement("span");
+            span.textContent = num;
+
+            if (selectedNumbers.includes(num)) {
+              checkbox.checked = true;
+              checkbox.disabled = true;
+            }
+
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            wrapper.appendChild(label);
+          });
+
+          section.appendChild(wrapper);
+          container.appendChild(section);
+          container.appendChild(document.createElement("hr"));
+        }
+      });
+    }
+
+    function updateStatus() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      const selected = [];
+
+      checkboxes.forEach(cb => {
+        if (cb.checked && !cb.disabled) {
+          selected.push(parseInt(cb.value));
+        }
+      });
+
+      const status = localStorage.getItem("selectedStatus") || "جاري التوزيع";
+      document.getElementById("status-message").textContent = "✅ تم التحديث";
+
+      fetch('/api/update-status/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ numbers: selected, status: status })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          checkboxes.forEach(cb => {
+            if (selected.includes(parseInt(cb.value))) {
+              cb.disabled = true;
+            }
+          });
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("status-message").textContent = "❌ فشل الاتصال بالخادم";
+      });
+    }
+
+    function goBack() {
+      window.location.href = "/panel/choose-status/";
+    }
+
+    createSections();
+  </script>
+</body>
+</html>

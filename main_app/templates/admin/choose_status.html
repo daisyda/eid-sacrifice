@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <title>تحديث حالة الأضاحي</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f4f5;
+      padding: 50px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      background-color: white;
+      border-radius: 25px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    .status-button {
+      background-color: #ede2c5;
+      border: none;
+      padding: 15px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    .status-button:hover {
+      background-color: #d4c8a6;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>اختر حالة الأضحية المراد تحديثها</h2>
+
+    <button class="status-button" onclick="selectStatus('تم الذبح')">تم الذبح</button>
+     <button class="status-button" onclick="selectStatus('تم التقطيع')">تم التقطيع</button>
+    <button class="status-button" onclick="selectStatus('جاري التوزيع')">جاري التوزيع</button>
+    <button class="status-button" onclick="selectStatus('تم التوزيع')">تم التوزيع</button>
+  </div>
+
+  <script>
+function selectStatus(status) {
+  const routes = {
+    "تم الذبح": "/panel/slaughtered/",
+    "تم التقطيع": "/panel/cut/",
+    "جاري التوزيع": "/panel/distributing_now/",
+    "تم التوزيع": "/panel/distributing_done/"
+  };
+
+  if (routes[status]) {
+    window.location.href = routes[status];
+  } else {
+    console.warn("حالة غير معروفة:", status);
+  }
+}
+
+  </script>
+</body>
+</html>

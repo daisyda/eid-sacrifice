@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}حالة الأضحية{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: right;
+        direction: rtl;
+        background-color: #fefafa;
+        padding: 40px;
+    }
+    .timeline-container {
+        background-color: #fff;
+        padding: 70px 60px; /* increased padding */
+        border-radius: 30px; /* slightly larger curve */
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        margin-top: 80px;
+        max-width: 1600px;
+        min-height: 500px;
+        justify-content: center;
+        width: 90%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .info {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 18px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .info p {
+        margin: 0;
+        white-space: nowrap;
+    }
+    .timeline {
+        display: flex;
+        justify-content: space-between;
+        position: relative;
+        padding-top: 30px;
+        margin-top: 60px;
+    }
+    .timeline::before {
+        content: '';
+        position: absolute;
+        top: 40px;
+        right: 0;
+        left: 0;
+        height: 4px;
+        background-color: #e0b300;
+        z-index: 0;
+    }
+    .step {
+        text-align: center;
+        flex: 1;
+        position: relative;
+        z-index: 1;
+    }
+    .circle {
+        width: 24px;
+        height: 24px;
+        background-color: #ccc;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+    }
+    .step.active .circle {
+        background-color: #7c0a27;
+    }
+    .label {
+        font-weight: bold;
+        color: #333;
+    }
+    .subtext {
+        font-size: 14px;
+        color: #666;
+    }
+    .back-link {
+        margin-top: 30px;
+        display: inline-block;
+        background-color: #7c0a27;
+        color: #fff;
+        padding: 8px 16px;
+        text-decoration: none;
+        border-radius: 8px;
+    }
+</style>
+
+{% if status == "not_found" %}
+    <p>لا توجد أضحية بهذه المعلومات.</p>
+    <a href="{% url 'donor_search' %}" class="back-link">رجوع</a>
+{% else %}
+    <div class="timeline-container">
+        <!-- Donor Info in one line -->
+        <div class="info">
+            <p><strong>اسم المتبرع:</strong> {{ donor_name }}</p>
+            <p><strong>جوال المتبرع:</strong> {{ phone }}</p>
+            <p><strong>رقم الأضحية:</strong> {{ udhiyah_id }}</p>
+        </div>
+
+        <!-- Timeline -->
+        <div class="timeline">
+            {% for step in timeline_steps %}
+                <div class="step {% if step.active %}active{% endif %}">
+                    <div class="circle"></div>
+                    <div class="label">{{ step.label }}</div>
+                    <div class="subtext">
+                        {% if step.code == "paid" %}تم استلام المبلغ وتسجيل الطلب{% endif %}
+                        {% if step.code == "booked" %}تم حجز الأضحية وتحديد وقت الذبح{% endif %}
+                        {% if step.code == "slaughtered" %}تم تنفيذ الذبح في الوقت الشرعي{% endif %}
+                        {% if step.code == "cutting" %}جاري تجهيز اللحوم وتوزينها{% endif %}
+                        {% if step.code == "half_ready" %}نصف الأضحية جاهز للاستلام{% endif %}
+                        {% if step.code == "distributing" %}بدأت عملية التوزيع على المستفيدين{% endif %}
+                        {% if step.code == "done" %}تم التوزيع بنجاح{% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endif %}
+{% endblock %}
