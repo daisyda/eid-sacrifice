@@ -39,7 +39,7 @@ def donor_status(request):
 
     print("🔍 Searching for order:", udhiyah_id, "| normalized phone:", phone)
 
-    record = Udhiyah.objects.filter(order_number=udhiyah_id, phone_number=phone).first()
+    record = Udhiyah.objects.filter(serial_number=udhiyah_id, phone_number=phone).first()
     if not record:
         return render(request, 'user/donor_status.html', {'status': 'not_found'})
 
