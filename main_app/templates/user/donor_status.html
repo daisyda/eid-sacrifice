@@ -161,11 +161,14 @@
             <p><strong>رقم الأضحية:</strong> {{ udhiyah_id }}</p>
         </div>
 
-        {% if timeline_steps and timeline_steps|last.code == 'done' %}
-        <div class="congrats-box">
-            🎉 تم توزيع الأضحية بنجاح! شكرًا لتبرعك 🌟
-        </div>
-        {% endif %}
+        {% with timeline_steps|last as last_step %}
+         {% if last_step.code == 'done' %}
+            <div class="congrats-box">
+                🎉 تم توزيع الأضحية بنجاح! شكرًا لتبرعك 🌟
+            </div>
+         {% endif %}
+        {% endwith %}
+
 
         <!-- Vertical Timeline -->
         <div class="timeline">
