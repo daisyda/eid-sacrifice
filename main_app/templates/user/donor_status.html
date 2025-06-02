@@ -1,17 +1,8 @@
 {% extends 'base.html' %}
-
 {% block title %}حالة الأضحية{% endblock %}
 
 {% block content %}
 <style>
-    body {
-        font-family: 'Cairo', sans-serif;
-        text-align: right;
-        direction: rtl;
-        background-color: #fefafa;
-        padding: 20px;
-    }
-
     .timeline-container {
         background-color: #fff;
         padding: 40px 30px;
@@ -20,31 +11,40 @@
         margin: 40px auto 0;
         max-width: 900px;
         width: 95%;
+        max-width: 800px;
     }
 
     .info {
         display: flex;
-        flex-wrap: wrap;
-        justify-content: flex-start;
-        gap: 20px;
+        justify-content: space-between;
+        text-align: center;
         font-size: 18px;
         margin-bottom: 30px;
+        padding: 0 20px;
     }
 
     .info p {
+        flex: 1;
         margin: 0;
-        white-space: nowrap;
     }
 
     .timeline {
         position: relative;
-        padding-right: 30px;
-        border-right: 4px solid #e0b300;
         display: flex;
         flex-direction: column;
         gap: 30px;
-        position: relative;
-        right: 12px;
+        padding-right: 30px;
+    }
+
+    .timeline::before {
+        content: '';
+        position: absolute;
+        right: 26px;
+        top: 0;
+        bottom: 40px;
+        width: 4px;
+        background-color: #e0b300;
+        z-index: 0;
     }
 
     .step {
@@ -70,7 +70,14 @@
 
     .step.active::before {
         background-color: #7c0a27;
-        box-shadow: 0 0 0 4px #fce7ec;
+        box-shadow: 0 0 0 6px #fce7ec;
+        animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+        0% { box-shadow: 0 0 0 0 rgba(124, 10, 39, 0.4); }
+        70% { box-shadow: 0 0 0 10px rgba(124, 10, 39, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(124, 10, 39, 0); }
     }
 
     .label {
@@ -85,15 +92,41 @@
         color: #666;
     }
 
-    .back-link {
+    .congrats-box {
+        background-color: #d1e7dd;
+        color: #0f5132;
+        padding: 15px 20px;
+        border-radius: 12px;
+        margin-top: 25px;
+        margin-bottom: 30px;
+        font-size: 18px;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        animation: fadeIn 1.2s ease forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeIn {
+        to { opacity: 1; }
+    }
+
+    .back-btn {
         margin-top: 30px;
         display: inline-block;
         background-color: #7c0a27;
         color: #fff;
-        padding: 10px 20px;
+        padding: 8px 18px;
         text-decoration: none;
         border-radius: 8px;
         font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background-color: #5f091d;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     }
 
     @media (max-width: 600px) {
@@ -118,7 +151,7 @@
 
 {% if status == "not_found" %}
     <p>لا توجد أضحية بهذه المعلومات.</p>
-    <a href="{% url 'donor_search' %}" class="back-link">رجوع</a>
+    <a href="{% url 'donor_search' %}" class="back-btn">رجوع</a>
 {% else %}
     <div class="timeline-container">
         <!-- Donor Info -->
@@ -127,6 +160,12 @@
             <p><strong>جوال المتبرع:</strong> {{ phone }}</p>
             <p><strong>رقم الأضحية:</strong> {{ udhiyah_id }}</p>
         </div>
+
+        {% if timeline_steps and timeline_steps|last.code == 'done' %}
+        <div class="congrats-box">
+            🎉 تم توزيع الأضحية بنجاح! شكرًا لتبرعك 🌟
+        </div>
+        {% endif %}
 
         <!-- Vertical Timeline -->
         <div class="timeline">
@@ -144,6 +183,10 @@
                     </div>
                 </div>
             {% endfor %}
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{% url 'donor_search' %}" class="back-btn">رجوع</a>
         </div>
     </div>
 {% endif %}

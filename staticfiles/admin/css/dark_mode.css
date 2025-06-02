@@ -10,7 +10,7 @@
       --body-loud-color: #ffffff;
   
       --breadcrumbs-link-fg: #e0e0e0;
-      --breadcrumbs-bg: var(--primary);
+      --breadcrumbs-bg: var(-git status-primary);
   
       --link-fg: #81d4fa;
       --link-hover-color: #4ac1f7;
