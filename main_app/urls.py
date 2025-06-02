@@ -35,4 +35,7 @@ urlpatterns = [
     # --------- API Endpoints ---------
     path('api/numbers/', get_sacrifice_numbers, name='get_sacrifice_numbers'),
     path('api/update-status/', update_status, name='update_status'),
+
+    
+    path('admin/run-load/', run_load_sacrifices),
 ]

@@ -95,3 +95,18 @@ def page_Distributing_Done(request):
         "status": "تم التوزيع",
         "udhiyas": udhiyas
     })
+
+
+
+from django.core.management import call_command
+from django.http import HttpResponse
+import os
+
+def run_load_sacrifices(request):
+    try:
+        # Adjust path if needed
+        filepath = os.path.abspath('sacrifices.csv')
+        call_command('load_sacrifices', filepath)
+        return HttpResponse("✅ Sacrifices loaded successfully.")
+    except Exception as e:
+        return HttpResponse(f"❌ Error: {e}")
