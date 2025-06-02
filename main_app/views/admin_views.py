@@ -37,11 +37,13 @@ def choose_status(request):
 
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
+    
+    # ✅ Fixed mapping: using internal English status values
     required_previous = {
-        "تم الذبح": "booked",
-        "تم التقطيع": "slaughtered",
-        "جاري التوزيع": "cutting",
-        "تم التوزيع": "distributing",
+        "slaughtered": "booked",
+        "cutting": "slaughtered",
+        "distributing": "cutting",
+        "done": "distributing",
     }
 
     previous_status = required_previous.get(status)
@@ -58,33 +60,37 @@ def get_sacrifice_numbers(request):
     })
 
 
-
-# Status pages (now lowercase filenames)
+# -------------------------------
+# Status Pages (Admin Panel)
+# -------------------------------
 
 @login_required
 def page_slaughtered(request):
-    udhiyas = Udhiyah.objects.filter(status="booked")  # تم حجز الأضحية
+    udhiyas = Udhiyah.objects.filter(status="booked")  # for تم الذبح
     return render(request, 'admin/slaughtered.html', {
         "status": "تم الذبح",
         "udhiyas": udhiyas
     })
+
 @login_required
 def page_Cut(request):
-    udhiyas = Udhiyah.objects.filter(status="slaughtered")  # تم الذبح
+    udhiyas = Udhiyah.objects.filter(status="slaughtered")  # for تم التقطيع
     return render(request, 'admin/cut.html', {
         "status": "تم التقطيع",
         "udhiyas": udhiyas
     })
+
 @login_required
 def page_Distributing_Now(request):
-    udhiyas = Udhiyah.objects.filter(status="cutting")  # تم التقطيع
+    udhiyas = Udhiyah.objects.filter(status="cutting")  # for جاري التوزيع
     return render(request, 'admin/distributing_now.html', {
         "status": "جاري التوزيع",
         "udhiyas": udhiyas
     })
+
 @login_required
 def page_Distributing_Done(request):
-    udhiyas = Udhiyah.objects.filter(status="distributing")  # جاري التوزيع
+    udhiyas = Udhiyah.objects.filter(status="distributing")  # for تم التوزيع
     return render(request, 'admin/distribution_done.html', {
         "status": "تم التوزيع",
         "udhiyas": udhiyas
