@@ -66,6 +66,20 @@
             margin-top: 10px;
         }
 
+        .hamburger {
+            display: none;
+            font-size: 28px;
+            padding: 20px;
+            cursor: pointer;
+            background-color: #96173f;
+            color: white;
+            border: none;
+        }
+
+        .mobile-sidebar {
+            display: none;
+        }
+
         main {
             flex-grow: 1;
             padding: 40px;
@@ -77,17 +91,28 @@
             }
 
             aside.sidebar {
-                width: 100%;
-                flex-direction: row;
-                flex-wrap: wrap;
-                justify-content: center;
-                padding: 20px;
+                display: none;
             }
 
-            .sidebar a {
-                margin: 8px;
-                width: auto;
-                text-align: center;
+            .mobile-sidebar {
+                display: block;
+                background-color: #f8f6f7;
+                padding: 20px;
+                text-align: right;
+                display: none;
+                flex-direction: column;
+            }
+
+            .mobile-sidebar a {
+                padding: 10px;
+                color: #96173f;
+                text-decoration: none;
+                font-weight: bold;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .hamburger {
+                display: block;
             }
 
             main {
@@ -98,7 +123,7 @@
 </head>
 <body>
 
-    <!-- Sidebar Navigation -->
+    <!-- Desktop Sidebar -->
     <aside class="sidebar">
         <a href="https://give.alzaad.org.sa/" class="nav-logo" aria-label="شعار جمعية الزاد"></a>
 
@@ -116,10 +141,34 @@
         <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
     </aside>
 
-    <!-- Page Content -->
+    <!-- Hamburger Button -->
+    <button class="hamburger" onclick="toggleSidebar()">☰ القائمة</button>
+
+    <!-- Mobile Sidebar -->
+    <div class="mobile-sidebar" id="mobileSidebar">
+        <a href="https://give.alzaad.org.sa/">الرئيسية</a>
+        <a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a>
+        <a href="https://give.alzaad.org.sa/p2/خدماتنا">خدماتنا</a>
+        <a href="https://give.alzaad.org.sa/إحصائيات-وأرقام">إحصائيات و أرقام</a>
+        <a href="https://give.alzaad.org.sa/p13/الحوكمة">الحوكمة</a>
+        <a href="https://give.alzaad.org.sa/p50/جديدنا">جديدنا</a>
+        <a href="https://give.alzaad.org.sa/p15/بوابة-الموظفين">بوابة الموظفين</a>
+        <a href="https://give.alzaad.org.sa/contactus">اتصل بنا</a>
+        <a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a>
+        <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
+        <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
+    </div>
+
+    <!-- Main Content -->
     <main>
         {% block content %}{% endblock %}
     </main>
 
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById("mobileSidebar");
+            sidebar.style.display = sidebar.style.display === "flex" ? "none" : "flex";
+        }
+    </script>
 </body>
 </html>
