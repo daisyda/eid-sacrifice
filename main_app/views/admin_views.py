@@ -38,10 +38,10 @@ def choose_status(request):
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
     required_previous = {
-        "تم الذبح": "تم حجز الأضحية",
-        "تم التقطيع": "تم الذبح",
-        "جاري التوزيع": "تم التقطيع",
-        "تم التوزيع": "جاري التوزيع",
+        "تم الذبح": "booked",
+        "تم التقطيع": "slaughtered",
+        "جاري التوزيع": "cutting",
+        "تم التوزيع": "distributing",
     }
 
     previous_status = required_previous.get(status)
@@ -56,6 +56,7 @@ def get_sacrifice_numbers(request):
         "numbers": all_displayed,
         "selected_numbers": selected_numbers
     })
+
 
 
 # Status pages (now lowercase filenames)

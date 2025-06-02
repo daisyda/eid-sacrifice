@@ -119,7 +119,7 @@
     }
 
     async function createSections() {
-      const status = "تم الذبح"; // ثابت
+      const status = "slaughtered";  // ✅ internal status value
       localStorage.setItem("selectedStatus", status);
 
       const response = await fetch('/api/numbers/?status=' + status);
@@ -137,7 +137,7 @@
 
       const grouped = { "100": [], "200": [], "300": [] };
       data.numbers.forEach(num => {
-        const group = Math.floor(num / 100) * 100;
+        const group = Math.floor(parseInt(num) / 100) * 100;
         if (group === 100 || group === 200 || group === 300) {
           grouped[group].push(num);
         }
@@ -166,7 +166,7 @@
             const span = document.createElement("span");
             span.textContent = num;
 
-            if (selectedNumbers.includes(num)) {
+            if (selectedNumbers.includes(parseInt(num))) {
               checkbox.checked = true;
               checkbox.disabled = true;
             }
@@ -193,7 +193,7 @@
         }
       });
 
-      const status = localStorage.getItem("selectedStatus") || "تم الذبح";
+      const status = localStorage.getItem("selectedStatus") || "slaughtered";
       document.getElementById("status-message").textContent = "✅ تم التحديث";
 
       fetch('/api/update-status/', {
