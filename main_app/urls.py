@@ -1,4 +1,6 @@
 from django.urls import path
+from main_app.views.admin_views import run_load_sacrifices
+
 
 # Admin Views
 from .views.admin_views import (
@@ -36,6 +38,6 @@ urlpatterns = [
     path('api/numbers/', get_sacrifice_numbers, name='get_sacrifice_numbers'),
     path('api/update-status/', update_status, name='update_status'),
 
-    
+
     path('admin/run-load/', run_load_sacrifices),
 ]
