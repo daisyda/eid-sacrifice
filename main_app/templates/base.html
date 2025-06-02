@@ -6,7 +6,7 @@
     <title>{% block title %}منصة الأضاحي{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- External CSS (from original site) -->
+    <!-- External CSS -->
     <link rel="stylesheet" href="https://alzaad.org.sa/lib/css/style.css?v=0.31.62aab">
     <link rel="stylesheet" href="https://alzaad.org.sa/theme/donate/style.css?v=0.31.62aab">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
@@ -18,14 +18,16 @@
             margin: 0;
             padding: 0;
         }
+
         header {
             background-color: #f8f6f7;
             padding: 10px 20px;
             display: flex;
+            flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            flex-wrap: row-reverse;
         }
+
         .nav-logo {
             background-image: url('https://give.alzaad.org.sa/media/main/logo_logo.webp');
             background-size: contain;
@@ -33,7 +35,9 @@
             background-position: center;
             width: 90px;
             height: 40px;
+            margin-bottom: 10px;
         }
+
         .nav-buttons a {
             display: inline-block;
             padding: 8px 16px;
@@ -42,29 +46,63 @@
             text-decoration: none;
             font-weight: bold;
         }
+
         .btn-donation {
             background-color: #eab221;
             color: black;
         }
+
         .btn-gift {
             background-color: #96173f;
             color: white;
         }
+
         .nav-links {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
-            margin: 10px 0;
+            justify-content: center;
+            gap: 12px;
             padding: 0;
             list-style: none;
+            margin: 10px 0;
         }
+
         .nav-links a {
             text-decoration: none;
             color: #96173f;
             font-weight: bold;
+            font-size: 16px;
         }
+
         main {
             padding: 20px;
+        }
+
+        /* === Responsive === */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+
+            .nav-links {
+                flex-direction: column;
+                gap: 10px;
+                padding: 0;
+                margin: 10px 0 0;
+            }
+
+            .nav-buttons {
+                margin-top: 10px;
+            }
+
+            .nav-buttons a {
+                display: block;
+                margin: 6px 0;
+                width: 100%;
+                text-align: center;
+            }
         }
     </style>
 </head>
@@ -72,7 +110,6 @@
 
     <!-- Header Section -->
     <header>
-        
         <a href="https://give.alzaad.org.sa/" class="nav-logo" aria-label="شعار جمعية الزاد"></a>
 
         <ul class="nav-links">
@@ -87,7 +124,6 @@
             <li><a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a></li>
         </ul>
 
-       
         <div class="nav-buttons">
             <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
             <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>

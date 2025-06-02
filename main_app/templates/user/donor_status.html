@@ -5,35 +5,30 @@
 {% block content %}
 <style>
     body {
-        font-family: Arial, sans-serif;
+        font-family: 'Cairo', sans-serif;
         text-align: right;
         direction: rtl;
         background-color: #fefafa;
-        padding: 40px;
+        padding: 20px;
     }
 
     .timeline-container {
         background-color: #fff;
-        padding: 70px 60px;
-        border-radius: 30px;
+        padding: 40px 30px;
+        border-radius: 25px;
         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-        margin-top: 80px;
-        max-width: 1600px;
-        min-height: 500px;
-        justify-content: center;
-        width: 90%;
-        margin-left: auto;
-        margin-right: auto;
+        margin: 40px auto 0;
+        max-width: 1000px;
+        width: 95%;
     }
 
     .info {
         display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 18px;
-        margin-bottom: 40px;
         flex-wrap: wrap;
+        justify-content: flex-start;
         gap: 20px;
+        font-size: 18px;
+        margin-bottom: 30px;
     }
 
     .info p {
@@ -43,27 +38,28 @@
 
     .timeline {
         display: flex;
-        justify-content: space-between;
+        overflow-x: auto;
+        gap: 30px;
+        padding-top: 20px;
+        padding-bottom: 10px;
         position: relative;
-        padding-top: 30px;
-        margin-top: 60px;
     }
 
     .timeline::before {
         content: '';
         position: absolute;
-        top: 40px;
+        top: 44px;
         right: 0;
-        left: 0;
         height: 4px;
+        width: 100%;
         background-color: #e0b300;
         z-index: 0;
     }
 
     .step {
+        flex: 0 0 auto;
+        width: 120px;
         text-align: center;
-        flex: 1;
-        position: relative;
         z-index: 1;
     }
 
@@ -72,25 +68,27 @@
         height: 24px;
         border-radius: 50%;
         margin: 0 auto 10px;
-        background-color: #ccc; /* Default color for upcoming */
+        background-color: #ccc;
     }
 
     .step.done .circle {
-        background-color: #999; /* Done step */
+        background-color: #999;
     }
 
     .step.active .circle {
-        background-color: #7c0a27; /* Current active step */
+        background-color: #7c0a27;
     }
 
     .label {
         font-weight: bold;
+        font-size: 16px;
         color: #333;
     }
 
     .subtext {
         font-size: 14px;
         color: #666;
+        margin-top: 5px;
     }
 
     .back-link {
@@ -98,9 +96,34 @@
         display: inline-block;
         background-color: #7c0a27;
         color: #fff;
-        padding: 8px 16px;
+        padding: 10px 20px;
         text-decoration: none;
         border-radius: 8px;
+        font-size: 16px;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 600px) {
+        .timeline-container {
+            padding: 30px 20px;
+        }
+
+        .info {
+            flex-direction: column;
+            font-size: 16px;
+        }
+
+        .step {
+            width: 100px;
+        }
+
+        .label {
+            font-size: 14px;
+        }
+
+        .subtext {
+            font-size: 12px;
+        }
     }
 </style>
 
@@ -109,7 +132,7 @@
     <a href="{% url 'donor_search' %}" class="back-link">رجوع</a>
 {% else %}
     <div class="timeline-container">
-        <!-- Donor Info in one line -->
+        <!-- Donor Info -->
         <div class="info">
             <p><strong>اسم المتبرع:</strong> {{ donor_name }}</p>
             <p><strong>جوال المتبرع:</strong> {{ phone }}</p>

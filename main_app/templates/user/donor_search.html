@@ -17,7 +17,7 @@
                 border: none;
                 outline: none;
                 box-shadow: none;
-                padding: 8px 16px;
+                padding: 10px 16px;
                 font-size: 16px;
                 border-radius: 16px;
                 text-align: right;
@@ -32,42 +32,56 @@
                 box-shadow: none;
             }
 
-            /* Optional: Remove autofill glow in Chrome */
             input:-webkit-autofill {
                 box-shadow: 0 0 0 1000px #f5eecf inset !important;
                 -webkit-text-fill-color: #000 !important;
             }
+
+            label {
+                font-size: 20px;
+                font-weight: bold;
+                margin-bottom: 8px;
+                color: #222;
+            }
+
+            .form-group {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-end;
+                margin-bottom: 30px;
+            }
+
+            @media (max-width: 480px) {
+                label {
+                    font-size: 18px;
+                }
+
+                input[type="text"] {
+                    font-size: 15px;
+                    padding: 9px 14px;
+                }
+            }
         </style>
 
         <form method="GET" action="{% url 'donor_status' %}" style="max-width: 500px; margin: 0 auto; direction: rtl;">
-            <!-- Udhiyah ID Field -->
-            <div style="display: flex; align-items: center; margin-bottom: 16px;">
-                <label for="udhiyah_id" style="
-                    min-width: 160px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    color: #222;
-                ">رقم الأضحية:</label>
+            <!-- Udhiyah ID -->
+            <div class="form-group">
+                <label for="udhiyah_id">رقم الأضحية:</label>
                 <input type="text" id="udhiyah_id" name="udhiyah_id" required>
             </div>
 
-            <!-- Phone Number Field -->
-            <div style="display: flex; align-items: center; margin-bottom: 20px;">
-                <label for="phone" style="
-                    min-width: 160px;
-                    font-size: 18px;
-                    font-weight: bold;
-                    color: #222;
-                ">رقم جوال المتبرع:</label>
+            <!-- Donor Phone -->
+            <div class="form-group">
+                <label for="phone">رقم جوال المتبرع:</label>
                 <input type="text" id="phone" name="phone" required>
             </div>
 
-            <!-- Submit Button -->
+            <!-- Submit -->
             <div style="text-align: center;">
                 <button type="submit"
                         style="
                             font-size: 18px;
-                            padding: 10px 40px;
+                            padding: 12px 50px;
                             background-color: #96173f;
                             color: white;
                             border: none;
