@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>قائمة الأضاحي</title>
+</head>
+<body>
+    <h1>قائمة الأضاحي</h1>
+    <table border="1">
+        <tr>
+            <th>Serial Number</th>
+            <th>Status</th>
+            <th>Product</th>
+            <th>Phone Number</th>
+            <th>Name</th>
+            <th>Order Number</th>
+            <th>Reference Number</th>
+        </tr>
+        {% for u in udhiyas %}
+        <tr>
+            <td>{{ u.serial_number }}</td>
+            <td>{{ u.status }}</td>
+            <td>{{ u.product }}</td>
+            <td>{{ u.phone_number }}</td>
+            <td>{{ u.name }}</td>
+            <td>{{ u.order_number }}</td>
+            <td>{{ u.reference_number }}</td>
+        </tr>
+        {% endfor %}
+  
+    </table>
+</body>
+</html>
