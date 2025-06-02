@@ -1,1 +1,1 @@
-web: python manage.py createadmin && gunicorn sacrifice_project.wsgi
+web: gunicorn sacrifice_project.wsgi
