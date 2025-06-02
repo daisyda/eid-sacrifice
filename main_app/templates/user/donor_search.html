@@ -46,11 +46,21 @@
 
             .form-group {
                 display: flex;
-                flex-direction: column;
+                flex-direction: row-reverse;
+                justify-content: space-between;
+                align-items: center;
                 align-items: flex-end;
                 margin-bottom: 30px;
             }
 
+            .from-group label{
+                min-width: 140px;
+                text-align: right;
+            }
+
+            .from-group input{
+                flex:1 ;
+            }
             @media (max-width: 480px) {
                 label {
                     font-size: 18px;
