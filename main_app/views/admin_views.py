@@ -3,6 +3,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 from django.shortcuts import render
 from ..models import Udhiyah
+from django.contrib.auth.decorators import login_required
 
 
 def udhiya_list(request):
@@ -58,17 +59,32 @@ def get_sacrifice_numbers(request):
 
 
 # Status pages (now lowercase filenames)
+
+@login_required
 def page_slaughtered(request):
-    return render(request, 'admin/slaughtered.html', {"status": "تم الذبح"})
-
-
+    udhiyas = Udhiyah.objects.filter(status="booked")  # تم حجز الأضحية
+    return render(request, 'admin/slaughtered.html', {
+        "status": "تم الذبح",
+        "udhiyas": udhiyas
+    })
+@login_required
 def page_Cut(request):
-    return render(request, 'admin/cut.html', {"status": "تم التقطيع"})
-
-
+    udhiyas = Udhiyah.objects.filter(status="slaughtered")  # تم الذبح
+    return render(request, 'admin/cut.html', {
+        "status": "تم التقطيع",
+        "udhiyas": udhiyas
+    })
+@login_required
 def page_Distributing_Now(request):
-    return render(request, 'admin/distributing_now.html', {"status": "جاري التوزيع"})
-
-
+    udhiyas = Udhiyah.objects.filter(status="cutting")  # تم التقطيع
+    return render(request, 'admin/distributing_now.html', {
+        "status": "جاري التوزيع",
+        "udhiyas": udhiyas
+    })
+@login_required
 def page_Distributing_Done(request):
-    return render(request, 'admin/distribution_done.html', {"status": "تم التوزيع"})
+    udhiyas = Udhiyah.objects.filter(status="distributing")  # جاري التوزيع
+    return render(request, 'admin/distribution_done.html', {
+        "status": "تم التوزيع",
+        "udhiyas": udhiyas
+    })
