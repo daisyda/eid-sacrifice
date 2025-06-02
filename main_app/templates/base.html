@@ -17,15 +17,19 @@
             background-color: #fdfafa;
             margin: 0;
             padding: 0;
+            display: flex;
+            direction: rtl;
         }
 
-        header {
+        aside.sidebar {
+            width: 240px;
+            min-height: 100vh;
             background-color: #f8f6f7;
-            padding: 10px 20px;
+            padding: 30px 20px;
+            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
             display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: center;
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .nav-logo {
@@ -33,104 +37,86 @@
             background-size: contain;
             background-repeat: no-repeat;
             background-position: center;
-            width: 90px;
-            height: 40px;
-            margin-bottom: 10px;
+            width: 120px;
+            height: 50px;
+            margin-bottom: 30px;
+            align-self: center;
         }
 
-        .nav-buttons a {
-            display: inline-block;
-            padding: 8px 16px;
-            margin-left: 8px;
-            border-radius: 8px;
-            text-decoration: none;
+        .sidebar a {
+            display: block;
+            margin: 6px 0;
+            padding: 10px 15px;
+            color: #96173f;
             font-weight: bold;
+            text-decoration: none;
+            width: 100%;
+            border-radius: 8px;
         }
 
         .btn-donation {
             background-color: #eab221;
             color: black;
+            margin-top: 20px;
         }
 
         .btn-gift {
             background-color: #96173f;
             color: white;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-            padding: 0;
-            list-style: none;
-            margin: 10px 0;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #96173f;
-            font-weight: bold;
-            font-size: 16px;
+            margin-top: 10px;
         }
 
         main {
-            padding: 20px;
+            flex-grow: 1;
+            padding: 40px;
         }
 
-        /* === Responsive === */
         @media (max-width: 768px) {
-            header {
+            body {
                 flex-direction: column;
-                align-items: center;
-                text-align: center;
             }
 
-            .nav-links {
-                flex-direction: column;
-                gap: 10px;
-                padding: 0;
-                margin: 10px 0 0;
-            }
-
-            .nav-buttons {
-                margin-top: 10px;
-            }
-
-            .nav-buttons a {
-                display: block;
-                margin: 6px 0;
+            aside.sidebar {
                 width: 100%;
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+                padding: 20px;
+            }
+
+            .sidebar a {
+                margin: 8px;
+                width: auto;
                 text-align: center;
+            }
+
+            main {
+                padding: 20px;
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Header Section -->
-    <header>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
         <a href="https://give.alzaad.org.sa/" class="nav-logo" aria-label="شعار جمعية الزاد"></a>
 
-        <ul class="nav-links">
-            <li><a href="https://give.alzaad.org.sa/">الرئيسية</a></li>
-            <li><a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a></li>
-            <li><a href="https://give.alzaad.org.sa/p2/خدماتنا">خدماتنا</a></li>
-            <li><a href="https://give.alzaad.org.sa/إحصائيات-وأرقام">إحصائيات و أرقام</a></li>
-            <li><a href="https://give.alzaad.org.sa/p13/الحوكمة">الحوكمة</a></li>
-            <li><a href="https://give.alzaad.org.sa/p50/جديدنا">جديدنا</a></li>
-            <li><a href="https://give.alzaad.org.sa/p15/بوابة-الموظفين">بوابة الموظفين</a></li>
-            <li><a href="https://give.alzaad.org.sa/contactus">اتصل بنا</a></li>
-            <li><a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a></li>
-        </ul>
+        <a href="https://give.alzaad.org.sa/">الرئيسية</a>
+        <a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a>
+        <a href="https://give.alzaad.org.sa/p2/خدماتنا">خدماتنا</a>
+        <a href="https://give.alzaad.org.sa/إحصائيات-وأرقام">إحصائيات و أرقام</a>
+        <a href="https://give.alzaad.org.sa/p13/الحوكمة">الحوكمة</a>
+        <a href="https://give.alzaad.org.sa/p50/جديدنا">جديدنا</a>
+        <a href="https://give.alzaad.org.sa/p15/بوابة-الموظفين">بوابة الموظفين</a>
+        <a href="https://give.alzaad.org.sa/contactus">اتصل بنا</a>
+        <a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a>
 
-        <div class="nav-buttons">
-            <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
-            <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
-        </div>
-    </header>
+        <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
+        <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
+    </aside>
 
-    <!-- Main Content -->
+    <!-- Page Content -->
     <main>
         {% block content %}{% endblock %}
     </main>
