@@ -65,7 +65,7 @@ def donor_status(request):
         })
 
     return render(request, 'user/donor_status.html', {
-        'udhiyah_id': record.order_number,
+        'udhiyah_id': record.serial_number,
         'phone': record.phone_number,
         'donor_name': donor_name,
         'status': current_status,
