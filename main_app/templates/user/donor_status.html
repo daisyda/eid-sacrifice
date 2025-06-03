@@ -137,8 +137,16 @@
 </style>
 
 {% if status == "not_found" %}
-    <p>لا توجد أضحية بهذه المعلومات.</p>
-    <a href="{% url 'donor_search' %}" class="back-btn">رجوع</a>
+    <div style="text-align: center; margin-top: 100px; font-family: 'Cairo', sans-serif;">
+    <p style="font-size: 20px; color: #333; margin-bottom: 30px;">
+        لا توجد أضحية مطابقة للمعلومات المدخلة.
+    </p>
+    <a href="{% url 'your-back-url-name' %}" 
+       style="background-color: #8b1f3c; color: white; padding: 10px 30px; border-radius: 8px; text-decoration: none; font-size: 16px;">
+       رجوع
+    </a>
+</div>
+
 {% else %}
     <div class="timeline-container">
         <!-- Donor Info -->
@@ -147,7 +155,6 @@
             <p><strong>جوال المتبرع:</strong> {{ phone }}</p>
             <p><strong>رقم الأضحية:</strong> {{ udhiyah_id }}</p>
         </div>
-        <p style="color: red; text-align: center;">🔍 الحالة من قاعدة البيانات: {{ status }}</p>
 
         
 
