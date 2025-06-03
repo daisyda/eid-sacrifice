@@ -29,6 +29,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             border-radius: 25px;
             margin: 10px 20px;
+            flex-wrap: wrap;
         }
 
         .site-header img {
@@ -37,14 +38,18 @@
 
         .nav-links {
             display: flex;
-            gap: 25px;
+            flex-wrap: wrap;
+            gap: 20px;
             align-items: center;
+            justify-content: center;
+            flex: 1;
         }
 
         .nav-links a {
             color: #96173f;
             font-weight: bold;
             text-decoration: none;
+            white-space: nowrap;
         }
 
         .btn-donation {
