@@ -6,7 +6,7 @@ class MainAppConfig(AppConfig):
 
     def ready(self):
         # ✅ Optional: Normalize statuses at startup
-        from . import fix_status
+        from main_app.utils import fix_status
         fix_status.fix_status_values()
 
         # ✅ Optional: Connect model signal handlers
