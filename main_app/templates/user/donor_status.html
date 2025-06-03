@@ -92,20 +92,7 @@
         color: #666;
     }
 
-    .congrats-box {
-        background-color: #d1e7dd;
-        color: #0f5132;
-        padding: 15px 20px;
-        border-radius: 12px;
-        margin-top: 25px;
-        margin-bottom: 30px;
-        font-size: 18px;
-        font-weight: bold;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-        animation: fadeIn 1.2s ease forwards;
-        opacity: 0;
-    }
+
 
     @keyframes fadeIn {
         to { opacity: 1; }
@@ -162,17 +149,7 @@
         </div>
         <p style="color: red; text-align: center;">🔍 الحالة من قاعدة البيانات: {{ status }}</p>
 
-        {% if timeline_steps %}
-            {% with timeline_steps|last as last_step %}
-                {% if last_step.code == 'done' %}
-                     <div class="congrats-box">
-                          تم توزيع الأضحية بنجاح! شكرًا لتبرعك 🎉🌟
-                    </div>
-                {% endif %}
-            {% endwith %}
-        {% endif %}
-
-
+        
 
         <!-- Vertical Timeline -->
         <div class="timeline">
