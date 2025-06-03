@@ -17,70 +17,55 @@
             background-color: #fdfafa;
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
             direction: rtl;
         }
 
         header.site-header {
-            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 30px;
             background-color: #fff;
-            padding: 20px 0;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-            text-align: center;
         }
 
         .site-header img {
-            height: 50px;
+            height: 45px;
         }
 
-        .content-wrapper {
+        .nav-links {
             display: flex;
-            width: 100%;
+            gap: 15px;
         }
 
-        aside.sidebar {
-            width: 240px;
-            min-height: 100vh;
-            background-color: #f8f6f7;
-            padding: 30px 20px;
-            box-shadow: -2px 0 8px rgba(0, 0, 0, 0.05);
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-
-        .sidebar a {
-            display: block;
-            margin: 6px 0;
-            padding: 10px 15px;
+        .nav-links a {
             color: #96173f;
             font-weight: bold;
             text-decoration: none;
-            width: 100%;
-            border-radius: 8px;
         }
 
         .btn-donation {
             background-color: #eab221;
             color: black;
-            margin-top: 20px;
+            padding: 6px 12px;
+            border-radius: 6px;
         }
 
         .btn-gift {
             background-color: #96173f;
             color: white !important;
-            margin-top: 10px;
+            padding: 6px 12px;
+            border-radius: 6px;
         }
 
         .hamburger {
             display: none;
             font-size: 28px;
-            padding: 20px;
             cursor: pointer;
             background-color: #96173f;
             color: white;
             border: none;
+            padding: 8px 16px;
         }
 
         .mobile-sidebar {
@@ -88,24 +73,22 @@
         }
 
         main {
-            flex-grow: 1;
             padding: 40px;
         }
 
         @media (max-width: 768px) {
-            .content-wrapper {
-                flex-direction: column;
+            .nav-links {
+                display: none;
             }
 
-            aside.sidebar {
-                display: none;
+            .hamburger {
+                display: block;
             }
 
             .mobile-sidebar {
                 display: flex;
                 background-color: #f8f6f7;
                 padding: 20px;
-                text-align: right;
                 flex-direction: column;
             }
 
@@ -116,28 +99,33 @@
                 font-weight: bold;
                 border-bottom: 1px solid #ddd;
             }
-
-            .hamburger {
-                display: block;
-            }
-
-            main {
-                padding: 20px;
-            }
         }
     </style>
 </head>
 <body>
 
-    <!-- 🔒 الهيدر الثابت مع الشعار -->
+    <!-- 🔒 الهيدر الثابت مع الشعار والروابط -->
     <header class="site-header">
         <a href="https://give.alzaad.org.sa/">
             <img src="https://give.alzaad.org.sa/media/main/logo_logo.webp" alt="شعار جمعية الزاد">
         </a>
-    </header>
 
-    <!-- 🍔 زر القائمة الجانبية للجوال -->
-    <button class="hamburger" onclick="toggleSidebar()">☰ القائمة</button>
+        <nav class="nav-links">
+            <a href="https://give.alzaad.org.sa/">الرئيسية</a>
+            <a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a>
+            <a href="https://give.alzaad.org.sa/p2/خدماتنا">خدماتنا</a>
+            <a href="https://give.alzaad.org.sa/إحصائيات-وأرقام">إحصائيات و أرقام</a>
+            <a href="https://give.alzaad.org.sa/p13/الحوكمة">الحوكمة</a>
+            <a href="https://give.alzaad.org.sa/p50/جديدنا">جديدنا</a>
+            <a href="https://give.alzaad.org.sa/p15/بوابة-الموظفين">بوابة الموظفين</a>
+            <a href="https://give.alzaad.org.sa/contactus">اتصل بنا</a>
+            <a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a>
+            <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
+            <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
+        </nav>
+
+        <button class="hamburger" onclick="toggleSidebar()">☰</button>
+    </header>
 
     <!-- 📱 القائمة الجانبية للموبايل -->
     <div class="mobile-sidebar" id="mobileSidebar">
@@ -154,28 +142,10 @@
         <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
     </div>
 
-    <!-- 🧱 المحتوى الكامل -->
-    <div class="content-wrapper">
-        <!-- 🚫 الشعار محذوف من هنا ✅ -->
-        <aside class="sidebar">
-            <a href="https://give.alzaad.org.sa/">الرئيسية</a>
-            <a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a>
-            <a href="https://give.alzaad.org.sa/p2/خدماتنا">خدماتنا</a>
-            <a href="https://give.alzaad.org.sa/إحصائيات-وأرقام">إحصائيات و أرقام</a>
-            <a href="https://give.alzaad.org.sa/p13/الحوكمة">الحوكمة</a>
-            <a href="https://give.alzaad.org.sa/p50/جديدنا">جديدنا</a>
-            <a href="https://give.alzaad.org.sa/p15/بوابة-الموظفين">بوابة الموظفين</a>
-            <a href="https://give.alzaad.org.sa/contactus">اتصل بنا</a>
-            <a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a>
-            <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
-            <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
-        </aside>
-
-        <!-- المحتوى الرئيسي -->
-        <main>
-            {% block content %}{% endblock %}
-        </main>
-    </div>
+    <!-- ✨ المحتوى الرئيسي -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
 
     <script>
         function toggleSidebar() {
