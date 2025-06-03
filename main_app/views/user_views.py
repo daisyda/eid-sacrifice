@@ -40,23 +40,23 @@ def donor_status(request):
     print("🔍 Searching for order:", udhiyah_id, "| normalized phone:", phone)
 
     record = Udhiyah.objects.filter(serial_number=udhiyah_id, phone_number=phone).first()
-    print("🔍 رقم الأضحية:", udhiyah_id)
-    print("📞 رقم الجوال بعد التنسيق:", phone)
-    print("📦 الحالة المستخرجة من قاعدة البيانات:", record.status)
-    print("📋 سلسلة الحالات المتوقعة:", status_sequence)
-
     if not record:
         return render(request, 'user/donor_status.html', {'status': 'not_found'})
 
     donor_name = record.name
     current_status = record.status
-    donation_type = getattr(record, 'donation_type', 'full')
+    donation_type = getattr(record, 'donation_type', None)
 
+    # نبدأ نعرف المتغير الأساسي أول
     status_sequence = ['paid', 'booked', 'slaughtered', 'cutting']
-    if donation_type == 'full':
-        status_sequence += ['distributing', 'done']
-    else:
+
+    # نضيف الباقي حسب نوع التبرع
+    if donation_type == 'half':
         status_sequence += ['half_ready', 'distributing', 'done']
+    else:
+    # إذا نوع التبرع فاضي أو "full"
+        status_sequence += ['distributing', 'done']
+
 
     current_index = status_sequence.index(current_status) if current_status in status_sequence else -1
     timeline_steps = []
