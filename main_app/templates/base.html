@@ -18,7 +18,25 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             direction: rtl;
+        }
+
+        header.site-header {
+            width: 100%;
+            background-color: #fff;
+            padding: 20px 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .site-header img {
+            height: 50px;
+        }
+
+        .content-wrapper {
+            display: flex;
+            width: 100%;
         }
 
         aside.sidebar {
@@ -30,17 +48,6 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-        }
-
-        .nav-logo {
-            background-image: url('https://give.alzaad.org.sa/media/main/logo_logo.webp');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            width: 120px;
-            height: 50px;
-            margin-bottom: 30px;
-            align-self: center;
         }
 
         .sidebar a {
@@ -86,7 +93,7 @@
         }
 
         @media (max-width: 768px) {
-            body {
+            .content-wrapper {
                 flex-direction: column;
             }
 
@@ -95,11 +102,10 @@
             }
 
             .mobile-sidebar {
-                display: block;
+                display: flex;
                 background-color: #f8f6f7;
                 padding: 20px;
                 text-align: right;
-                display: none;
                 flex-direction: column;
             }
 
@@ -123,28 +129,17 @@
 </head>
 <body>
 
-    <!-- Desktop Sidebar -->
-    <aside class="sidebar">
-        <a href="https://give.alzaad.org.sa/" class="nav-logo" aria-label="شعار جمعية الزاد"></a>
+    <!-- 🔒 الهيدر الثابت مع الشعار -->
+    <header class="site-header">
+        <a href="https://give.alzaad.org.sa/">
+            <img src="https://give.alzaad.org.sa/media/main/logo_logo.webp" alt="شعار جمعية الزاد">
+        </a>
+    </header>
 
-        <a href="https://give.alzaad.org.sa/">الرئيسية</a>
-        <a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a>
-        <a href="https://give.alzaad.org.sa/p2/خدماتنا">خدماتنا</a>
-        <a href="https://give.alzaad.org.sa/إحصائيات-وأرقام">إحصائيات و أرقام</a>
-        <a href="https://give.alzaad.org.sa/p13/الحوكمة">الحوكمة</a>
-        <a href="https://give.alzaad.org.sa/p50/جديدنا">جديدنا</a>
-        <a href="https://give.alzaad.org.sa/p15/بوابة-الموظفين">بوابة الموظفين</a>
-        <a href="https://give.alzaad.org.sa/contactus">اتصل بنا</a>
-        <a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a>
-
-        <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
-        <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
-    </aside>
-
-    <!-- Hamburger Button -->
+    <!-- 🍔 زر القائمة الجانبية للجوال -->
     <button class="hamburger" onclick="toggleSidebar()">☰ القائمة</button>
 
-    <!-- Mobile Sidebar -->
+    <!-- 📱 القائمة الجانبية للموبايل -->
     <div class="mobile-sidebar" id="mobileSidebar">
         <a href="https://give.alzaad.org.sa/">الرئيسية</a>
         <a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a>
@@ -159,10 +154,28 @@
         <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
     </div>
 
-    <!-- Main Content -->
-    <main>
-        {% block content %}{% endblock %}
-    </main>
+    <!-- 🧱 المحتوى الكامل -->
+    <div class="content-wrapper">
+        <!-- 🚫 الشعار محذوف من هنا ✅ -->
+        <aside class="sidebar">
+            <a href="https://give.alzaad.org.sa/">الرئيسية</a>
+            <a href="https://give.alzaad.org.sa/p54/من-نحن">من نحن</a>
+            <a href="https://give.alzaad.org.sa/p2/خدماتنا">خدماتنا</a>
+            <a href="https://give.alzaad.org.sa/إحصائيات-وأرقام">إحصائيات و أرقام</a>
+            <a href="https://give.alzaad.org.sa/p13/الحوكمة">الحوكمة</a>
+            <a href="https://give.alzaad.org.sa/p50/جديدنا">جديدنا</a>
+            <a href="https://give.alzaad.org.sa/p15/بوابة-الموظفين">بوابة الموظفين</a>
+            <a href="https://give.alzaad.org.sa/contactus">اتصل بنا</a>
+            <a href="https://give.alzaad.org.sa/p84/أضحيتي">أضحيتي</a>
+            <a class="btn-donation" href="https://give.alzaad.org.sa/c/0/all">التبرعات</a>
+            <a class="btn-gift" href="https://give.alzaad.org.sa/gift/new">الإهداءات</a>
+        </aside>
+
+        <!-- المحتوى الرئيسي -->
+        <main>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
 
     <script>
         function toggleSidebar() {
