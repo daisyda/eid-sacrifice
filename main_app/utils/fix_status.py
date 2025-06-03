@@ -13,6 +13,7 @@ STATUS_MAP = {
 
 def fix_status_values():
     updated = 0
+    skipped = 0
 
     for obj in Udhiyah.objects.all():
         status_value = obj.status.strip()
@@ -22,12 +23,7 @@ def fix_status_values():
             obj.status = STATUS_MAP[status_value]
             obj.save()
             updated += 1
+        elif status_value in STATUS_MAP.values():
+            skipped += 1
 
-<<<<<<< HEAD:main_app/fix_status.py
-    if updated:
-        print(f"✅ Auto-fixed {updated} status values.")
-=======
-    print(f"\n🎉 Done. Updated: {updated}, Already correct: {skipped}")
-
-# Leave this out for import-based usage only
->>>>>>> bc55f73 (Register Udhiyah and update load/fix views):main_app/utils/fix_status.py
+    print(f"✅ Auto-fixed {updated} status values. Skipped {skipped} already-correct entries.")
