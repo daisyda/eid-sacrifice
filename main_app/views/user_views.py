@@ -79,18 +79,16 @@ def donor_status(request):
     
     # أضيفي هذا في views.py (مثلاً فوق)
 from django.http import HttpResponse
-from main_app.fix_status import fix_status_values  # تأكدي من المسار
+import traceback
+from main_app.fix_status import fix_status_values  # أو عدلي المسار حسب موقع الملف
 
 def run_fix_status(request):
     try:
         fix_status_values()
-        return HttpResponse("✅ Status updated successfully.")
+        return HttpResponse("✅ تم تحديث الحالات بنجاح.")
     except Exception as e:
-        import traceback
-        return HttpResponse(
-            f"❌ Error occurred:<br><pre>{traceback.format_exc()}</pre>",
-            content_type="text/html",
-            status=500
-        )
+        error_trace = traceback.format_exc()
+        return HttpResponse(f"<h3>❌ حصل خطأ:</h3><pre>{error_trace}</pre>", content_type="text/html", status=500)
+
 
 
