@@ -29,7 +29,7 @@
             background-color: #fff;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             border-radius: 25px;
-            margin: 10px 20px;
+            margin: 0 20px 10px;
             flex-wrap: wrap;
         }
 
@@ -79,12 +79,11 @@
         }
 
         #mobileSidebar {
-            display: none !important;
+            display: none;
         }
 
-
         main {
-            padding: 10px 40px 40px;
+            padding: 0 40px 30px;
         }
 
         @media (max-width: 768px) {
@@ -97,7 +96,7 @@
             }
 
             .mobile-sidebar {
-                display: flex;
+                display: none;
                 background-color: #f8f6f7;
                 padding: 20px;
                 flex-direction: column;
@@ -111,6 +110,10 @@
                 text-decoration: none;
                 font-weight: bold;
                 border-bottom: 1px solid #ddd;
+            }
+
+            main {
+                padding: 0 20px 25px;
             }
         }
     </style>
@@ -163,7 +166,7 @@
     <script>
         function toggleSidebar() {
             const sidebar = document.getElementById("mobileSidebar");
-            sidebar.style.display = sidebar.style.display === "flex" ? "none" : "flex";
+            sidebar.style.display = (sidebar.style.display === "flex") ? "none" : "flex";
         }
     </script>
 </body>
