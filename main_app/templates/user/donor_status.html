@@ -137,10 +137,17 @@
 </style>
 
 {% if status == "not_found" %}
-  <p>🔥 هذا مجرد اختبار بسيط</p>
-</div>
-
+    <div style="display: flex; flex-direction: column; justify-content: center; align-items: center; height: 60vh; font-family: 'Cairo', sans-serif; text-align: center;">
+        <p style="font-size: 22px; color: #333; margin-bottom: 30px;">
+            لم يتم العثور على أضحية تطابق المعلومات المدخلة.
+        </p>
+        <a href="{% url 'donor_search' %}"
+           style="background-color: #7c0a27; color: white; padding: 10px 30px; border-radius: 8px; text-decoration: none; font-size: 16px; transition: 0.3s ease;">
+           الرجوع إلى صفحة البحث
+        </a>
+    </div>
 {% else %}
+
     <div class="timeline-container">
         <!-- Donor Info -->
         <div class="info">
