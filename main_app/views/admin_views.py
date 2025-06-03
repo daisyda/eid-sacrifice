@@ -100,13 +100,22 @@ def page_Distributing_Done(request):
 
 from django.core.management import call_command
 from django.http import HttpResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from django.conf import settings
 import os
+from main_app.utils.fix_status import fix_status_values
 
+@staff_member_required
 def run_load_sacrifices(request):
     try:
-        # Adjust path if needed
-        filepath = os.path.abspath('sacrifices.csv')
+        filepath = os.path.join(settings.BASE_DIR, 'sacrifices.csv')
+
+        if not os.path.exists(filepath):
+            return HttpResponse("❌ File not found: sacrifices.csv")
+
         call_command('load_sacrifices', filepath)
-        return HttpResponse("✅ Sacrifices loaded successfully.")
+        fix_status_values()
+
+        return HttpResponse("✅ Sacrifices loaded and statuses fixed successfully.")
     except Exception as e:
         return HttpResponse(f"❌ Error: {e}")
