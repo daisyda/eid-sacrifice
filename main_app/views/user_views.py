@@ -76,3 +76,10 @@ def donor_status(request):
         'status': current_status,
         'timeline_steps': timeline_steps,
     })
+    
+    # أضيفي هذا في views.py (مثلاً فوق)
+from main_app.fix_status import fix_status_values
+
+def run_fix_status(request):
+    fix_status_values()
+    return HttpResponse("تم تعديل الحالات بنجاح")
