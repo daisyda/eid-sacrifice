@@ -160,6 +160,7 @@
             <p><strong>جوال المتبرع:</strong> {{ phone }}</p>
             <p><strong>رقم الأضحية:</strong> {{ udhiyah_id }}</p>
         </div>
+        <p style="color: red; text-align: center;">🔍 الحالة من قاعدة البيانات: {{ status }}</p>
 
         {% with timeline_steps|last as last_step %}
          {% if last_step.code == 'done' %}
