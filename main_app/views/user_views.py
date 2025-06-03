@@ -76,19 +76,5 @@ def donor_status(request):
         'status': current_status,
         'timeline_steps': timeline_steps,
     })
-    
-    # أضيفي هذا في views.py (مثلاً فوق)
-from django.http import HttpResponse
-import traceback
-from main_app.fix_status import fix_status_values  # أو عدلي المسار حسب موقع الملف
-
-def run_fix_status(request):
-    try:
-        fix_status_values()
-        return HttpResponse("✅ تم تحديث الحالات بنجاح.")
-    except Exception as e:
-        error_trace = traceback.format_exc()
-        return HttpResponse(f"<h3>❌ حصل خطأ:</h3><pre>{error_trace}</pre>", content_type="text/html", status=500)
-
 
 
