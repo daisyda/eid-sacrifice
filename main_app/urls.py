@@ -41,4 +41,5 @@ urlpatterns = [
     path('api/update-status/', update_status, name='update_status'),
 
 
-    ppath('admin/run-load/', run_load_sacrifices, name='run_load_sacrifices'),
+    path('admin/run-load/', run_load_sacrifices, name='run_load_sacrifices'),
+]
