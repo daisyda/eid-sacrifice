@@ -25,7 +25,7 @@ urlpatterns = [
     # --------- User Routes ---------
     path('', donor_search, name='donor_search'),
     path('status/', donor_status, name='donor_status'),
-    path('run-fix/', run_fix_status),
+    path('run-fix/', run_fix_status, name='run_fix_status'),
 
 
     # --------- Admin Pages ---------
