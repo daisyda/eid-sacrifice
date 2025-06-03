@@ -40,6 +40,11 @@ def donor_status(request):
     print("🔍 Searching for order:", udhiyah_id, "| normalized phone:", phone)
 
     record = Udhiyah.objects.filter(serial_number=udhiyah_id, phone_number=phone).first()
+    print("🔍 رقم الأضحية:", udhiyah_id)
+    print("📞 رقم الجوال بعد التنسيق:", phone)
+    print("📦 الحالة المستخرجة من قاعدة البيانات:", record.status)
+    print("📋 سلسلة الحالات المتوقعة:", status_sequence)
+
     if not record:
         return render(request, 'user/donor_status.html', {'status': 'not_found'})
 
