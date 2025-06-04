@@ -31,7 +31,6 @@ def admin_login_view(request):
 
     return render(request, 'admin/admin_login.html')
 
-
 # -------------------------------
 # واجهات المشرف الخاصة بالأضاحي
 # -------------------------------
@@ -67,23 +66,24 @@ def choose_status(request):
 @staff_required
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
-    required_previous = {
-        "slaughtered": "booked",
-        "cutting": "slaughtered",
-        "distributing": "cutting",
-        "done": "distributing",
+
+    # علاقة الحالات المنطقية للتنقل
+    allowed_map = {
+        "slaughtered": "booked",         # تم الذبح ← يظهر فقط اللي تم حجزهم
+        "cutting": "slaughtered",        # تم التقطيع ← يظهر فقط اللي تم ذبحهم
+        "distributing": "cutting",       # جاري التوزيع ← يظهر فقط اللي تم تقطيعهم
+        "done": "distributing",          # تم التوزيع ← يظهر فقط اللي جاري توزيعهم
     }
 
-    previous_status = required_previous.get(status)
+    previous_status = allowed_map.get(status)
     if not previous_status:
         return JsonResponse({"numbers": [], "selected_numbers": []})
 
     valid_numbers = list(Udhiyah.objects.filter(status=previous_status).values_list("serial_number", flat=True))
     selected_numbers = list(Udhiyah.objects.filter(status=status).values_list("serial_number", flat=True))
-    all_displayed = list(set(valid_numbers + selected_numbers))
 
     return JsonResponse({
-        "numbers": all_displayed,
+        "numbers": valid_numbers,
         "selected_numbers": selected_numbers
     })
 
