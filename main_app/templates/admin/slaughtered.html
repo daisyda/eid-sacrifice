@@ -135,16 +135,16 @@
 
     const selectedNumbers = data.selected_numbers || [];
 
-    const grouped = { "نعيمي": [], "نجدي": [], "سواكني": [] };
+    const grouped = { "نعيمي": [], "ساكني": [], "بربري": [] };
 
     data.numbers.forEach(num => {
       const n = parseInt(num);
       if (n >= 100 && n < 200) {
         grouped["نعيمي"].push(num);
       } else if (n >= 200 && n < 300) {
-        grouped["نجدي"].push(num);
+        grouped["ساكني"].push(num);
       } else if (n >= 300) {
-        grouped["سواكني"].push(num);
+        grouped["بربري"].push(num);
       }
     });
 
