@@ -1,9 +1,7 @@
 from django.urls import path
-from main_app.views.admin_views import run_load_sacrifices
-
-
-# Admin Views
-from .views.admin_views import (
+from main_app.views.admin_views import (
+    run_load_sacrifices,
+    admin_login_view,  # ✅ أضفنا هذا
     udhiya_list,
     update_status,
     choose_number,
@@ -15,7 +13,6 @@ from .views.admin_views import (
     page_Distributing_Done,
 )
 
-# User Views
 from .views.user_views import (
     donor_search,
     donor_status,
@@ -27,6 +24,8 @@ urlpatterns = [
     path('status/', donor_status, name='donor_status'),
     #path('run-fix/', run_fix_status, name='run_fix_status'),
 
+    # --------- Admin Auth ---------
+    path('admin-login/', admin_login_view, name='admin_login'),  # ✅ أضفنا هذا
 
     # --------- Admin Pages ---------
     path('panel/choose-status/', choose_status, name='choose_status'),
@@ -40,6 +39,6 @@ urlpatterns = [
     path('api/numbers/', get_sacrifice_numbers, name='get_sacrifice_numbers'),
     path('api/update-status/', update_status, name='update_status'),
 
-
+    # --------- Admin Tools ---------
     path('admin/run-load/', run_load_sacrifices, name='run_load_sacrifices'),
 ]
