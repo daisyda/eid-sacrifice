@@ -15,7 +15,7 @@
             margin: 100px auto;
             background-color: #fff;
             padding: 40px;
-            border-radius: 20px;
+            border-radius: 25px;
             box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
             text-align: right;
         }
@@ -27,40 +27,47 @@
             color: #7c0a27;
         }
 
-        .login-form label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: bold;
-        }
-
-        .password-wrapper {
+        .form-group {
+            margin-bottom: 25px;
             position: relative;
         }
 
-        .password-wrapper input {
+        label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input[type="text"],
+        input[type="password"] {
             width: 100%;
-            padding: 12px 40px 12px 12px;
+            padding: 12px 45px 12px 16px;
             background-color: #f5eecf;
             border: none;
-            border-radius: 8px;
+            border-radius: 16px;
             font-size: 16px;
         }
 
         .toggle-password {
             position: absolute;
             top: 50%;
-            right: 10px;
+            right: 12px;
             transform: translateY(-50%);
             background: none;
             border: none;
             cursor: pointer;
-            font-size: 18px;
-            color: #555;
+            padding: 0;
+        }
+
+        .toggle-password svg {
+            width: 22px;
+            height: 22px;
+            fill: #555;
         }
 
         .login-form button[type="submit"] {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background-color: #96173f;
             color: white;
             border: none;
@@ -79,6 +86,7 @@
             color: red;
             font-size: 14px;
             margin-top: 15px;
+            text-align: center;
         }
     </style>
 </head>
@@ -87,13 +95,19 @@
         <h2>تسجيل دخول المشرف</h2>
         <form method="post">
             {% csrf_token %}
-            <label for="username">اسم المستخدم</label>
-            <input type="text" name="username" id="username" required>
 
-            <label for="password">كلمة المرور</label>
-            <div class="password-wrapper">
+            <div class="form-group">
+                <label for="username">اسم المستخدم</label>
+                <input type="text" name="username" id="username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">كلمة المرور</label>
                 <input type="password" name="password" id="password" required>
-                <button type="button" class="toggle-password" onclick="revealPassword()">👁️</button>
+                <button type="button" class="toggle-password" onclick="togglePassword()">
+                    <!-- SVG أيقونة العين -->
+                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M572.52 241.4C518.46 135.2 407.8 64 288 64S57.54 135.2 3.48 241.4a48.27 48.27 0 0 0 0 29.2C57.54 376.8 168.2 448 288 448s230.5-71.2 284.5-177.4a48.27 48.27 0 0 0 0-29.2zM288 400c-97.2 0-183.1-55-227.6-144C104.9 167 190.8 112 288 112s183.1 55 227.6 144c-44.5 89-130.4 144-227.6 144zm0-240a96 96 0 1 0 96 96 96.11 96.11 0 0 0-96-96zm0 144a48 48 0 1 1 48-48 48.05 48.05 0 0 1-48 48z"/></svg>
+                </button>
             </div>
 
             <button type="submit">دخول</button>
@@ -109,13 +123,15 @@
     </div>
 
     <script>
-        function revealPassword() {
-            const passwordInput = document.getElementById("password");
-            passwordInput.type = "text";
+        function togglePassword() {
+            const input = document.getElementById("password");
+            const icon = document.getElementById("eyeIcon");
+            input.type = "text";
 
+            // ترجع مخفية بعد 1.5 ثانية
             setTimeout(() => {
-                passwordInput.type = "password";
-            }, 1500); 
+                input.type = "password";
+            }, 1500);
         }
     </script>
 </body>
