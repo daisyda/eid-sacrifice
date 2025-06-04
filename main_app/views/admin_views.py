@@ -63,38 +63,35 @@ def choose_status(request):
 
 # ✅ إظهار أرقام الأضاحي حسب الحالة المنطقية
 @staff_required
+@staff_required
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
 
     # التسلسل المنطقي للحالات
     status_flow = {
-        "slaughtered": "booked",
-        "cut": "slaughtered",
-        "distributing_now": "cut",
-        "distributed": "distributing_now",
+        "slaughtered": "booked",            # تظهر فقط اللي حالتها "تم الحجز"
+        "cut": "slaughtered",               # تظهر فقط اللي حالتها "تم الذبح"
+        "distributing_now": "cut",          # تظهر فقط اللي حالتها "تم التقطيع"
+        "distributed": "distributing_now",  # تظهر فقط اللي حالتها "جاري التوزيع"
     }
 
     previous_status = status_flow.get(status)
     if not previous_status:
         return JsonResponse({"numbers": [], "selected_numbers": []})
 
-    # ✅ الأرقام المؤهلة لتحديث الحالة (حسب الحالة السابقة)
+    # نرجع فقط الأضاحي اللي حالتها السابقة هي المطلوبة
     valid_numbers = list(
         Udhiyah.objects.filter(status=previous_status).values_list("serial_number", flat=True)
     )
 
-    # ✅ الأرقام اللي حالتها حالياً نفس الصفحة
-    selected_numbers = list(
-        Udhiyah.objects.filter(status=status).values_list("serial_number", flat=True)
-    )
-
-    # ✅ دمجهم مع بعض بدون تكرار
-    all_displayed = list(set(valid_numbers + selected_numbers))
+    # ما نعرض الأرقام اللي حالتها وصلت بالفعل للـ status الحالي
+    selected_numbers = []
 
     return JsonResponse({
-        "numbers": all_displayed,
+        "numbers": valid_numbers,
         "selected_numbers": selected_numbers
     })
+
 
 # ✅ صفحات الحالات
 @staff_required
