@@ -1,15 +1,40 @@
-import json
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
-from django.http import JsonResponse
-from django.shortcuts import render
-from ..models import Udhiyah
+from django.http import JsonResponse, HttpResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
+from django.core.management import call_command
+from django.conf import settings
+from ..models import Udhiyah
+import json
+import os
+
+# -------------------------------
+# ✅ تسجيل دخول المشرف
+# -------------------------------
+def admin_login_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None and user.is_staff:
+            login(request, user)
+            return redirect('choose_status')  # أو غيريها لأي صفحة لوحة تحكم تبينها
+        else:
+            messages.error(request, 'اسم المستخدم أو كلمة المرور غير صحيحة، أو الحساب ليس مشرفاً.')
+
+    return render(request, 'admin/admin_login.html')
 
 
+# -------------------------------
+# واجهات المشرف الخاصة بالأضاحي
+# -------------------------------
 def udhiya_list(request):
     udhiyas = Udhiyah.objects.all()
     return render(request, 'admin/udhiyah_list.html', {'udhiyas': udhiyas})
-
 
 @csrf_exempt
 def update_status(request):
@@ -26,19 +51,14 @@ def update_status(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
-
 def choose_number(request):
     return render(request, 'admin/choose_number.html')
-
 
 def choose_status(request):
     return render(request, 'admin/choose_status.html')
 
-
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
-    
-    # ✅ Fixed mapping: using internal English status values
     required_previous = {
         "slaughtered": "booked",
         "cutting": "slaughtered",
@@ -59,14 +79,12 @@ def get_sacrifice_numbers(request):
         "selected_numbers": selected_numbers
     })
 
-
 # -------------------------------
-# Status Pages (Admin Panel)
+# صفحات الحالات - لوحة المشرف
 # -------------------------------
-
 @login_required
 def page_slaughtered(request):
-    udhiyas = Udhiyah.objects.filter(status="booked")  # for تم الذبح
+    udhiyas = Udhiyah.objects.filter(status="booked")
     return render(request, 'admin/slaughtered.html', {
         "status": "تم الذبح",
         "udhiyas": udhiyas
@@ -74,7 +92,7 @@ def page_slaughtered(request):
 
 @login_required
 def page_Cut(request):
-    udhiyas = Udhiyah.objects.filter(status="slaughtered")  # for تم التقطيع
+    udhiyas = Udhiyah.objects.filter(status="slaughtered")
     return render(request, 'admin/cut.html', {
         "status": "تم التقطيع",
         "udhiyas": udhiyas
@@ -82,7 +100,7 @@ def page_Cut(request):
 
 @login_required
 def page_Distributing_Now(request):
-    udhiyas = Udhiyah.objects.filter(status="cutting")  # for جاري التوزيع
+    udhiyas = Udhiyah.objects.filter(status="cutting")
     return render(request, 'admin/distributing_now.html', {
         "status": "جاري التوزيع",
         "udhiyas": udhiyas
@@ -90,20 +108,15 @@ def page_Distributing_Now(request):
 
 @login_required
 def page_Distributing_Done(request):
-    udhiyas = Udhiyah.objects.filter(status="distributing")  # for تم التوزيع
+    udhiyas = Udhiyah.objects.filter(status="distributing")
     return render(request, 'admin/distribution_done.html', {
         "status": "تم التوزيع",
         "udhiyas": udhiyas
     })
 
-
-
-from django.core.management import call_command
-from django.http import HttpResponse
-from django.contrib.admin.views.decorators import staff_member_required
-from django.conf import settings
-import os
-
+# -------------------------------
+# تحميل البيانات من ملف CSV
+# -------------------------------
 @staff_member_required
 def run_load_sacrifices(request):
     try:
