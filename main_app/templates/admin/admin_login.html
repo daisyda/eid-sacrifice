@@ -38,10 +38,9 @@
             margin-bottom: 8px;
         }
 
-        input[type="text"],
-        input[type="password"] {
+        .form-group input {
             width: 100%;
-            padding: 12px 45px 12px 16px;
+            padding: 12px 16px 12px 45px; /* padding-left أضفنا عشان الأيقونة */
             background-color: #f5eecf;
             border: none;
             border-radius: 16px;
@@ -51,7 +50,7 @@
         .toggle-password {
             position: absolute;
             top: 50%;
-            right: 12px;
+            left: 12px; /* العين صارت على اليسار */
             transform: translateY(-50%);
             background: none;
             border: none;
@@ -105,8 +104,9 @@
                 <label for="password">كلمة المرور</label>
                 <input type="password" name="password" id="password" required>
                 <button type="button" class="toggle-password" onclick="togglePassword()">
-                    <!-- SVG أيقونة العين -->
-                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><path d="M572.52 241.4C518.46 135.2 407.8 64 288 64S57.54 135.2 3.48 241.4a48.27 48.27 0 0 0 0 29.2C57.54 376.8 168.2 448 288 448s230.5-71.2 284.5-177.4a48.27 48.27 0 0 0 0-29.2zM288 400c-97.2 0-183.1-55-227.6-144C104.9 167 190.8 112 288 112s183.1 55 227.6 144c-44.5 89-130.4 144-227.6 144zm0-240a96 96 0 1 0 96 96 96.11 96.11 0 0 0-96-96zm0 144a48 48 0 1 1 48-48 48.05 48.05 0 0 1-48 48z"/></svg>
+                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512">
+                        <path d="M572.52 241.4C518.46 135.2 407.8 64 288 64S57.54 135.2 3.48 241.4a48.27 48.27 0 0 0 0 29.2C57.54 376.8 168.2 448 288 448s230.5-71.2 284.5-177.4a48.27 48.27 0 0 0 0-29.2zM288 400c-97.2 0-183.1-55-227.6-144C104.9 167 190.8 112 288 112s183.1 55 227.6 144c-44.5 89-130.4 144-227.6 144zm0-240a96 96 0 1 0 96 96 96.11 96.11 0 0 0-96-96zm0 144a48 48 0 1 1 48-48 48.05 48.05 0 0 1-48 48z"/>
+                    </svg>
                 </button>
             </div>
 
@@ -128,7 +128,6 @@
             const icon = document.getElementById("eyeIcon");
             input.type = "text";
 
-            // ترجع مخفية بعد 1.5 ثانية
             setTimeout(() => {
                 input.type = "password";
             }, 1500);
