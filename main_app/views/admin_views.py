@@ -67,25 +67,33 @@ def choose_status(request):
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
 
-    # علاقة الحالات المنطقية للتنقل
-    allowed_map = {
-        "slaughtered": "booked",         # تم الذبح ← يظهر فقط اللي تم حجزهم
-        "cutting": "slaughtered",        # تم التقطيع ← يظهر فقط اللي تم ذبحهم
-        "distributing": "cutting",       # جاري التوزيع ← يظهر فقط اللي تم تقطيعهم
-        "done": "distributing",          # تم التوزيع ← يظهر فقط اللي جاري توزيعهم
+    # التسلسل المنطقي للحالات
+    status_flow = {
+        "تم الذبح": "تم حجز الأضحية",
+        "تم التقطيع": "تم الذبح",
+        "جاري التوزيع": "تم التقطيع",
+        "تم التوزيع": "جاري التوزيع",
     }
 
-    previous_status = allowed_map.get(status)
+    previous_status = status_flow.get(status)
     if not previous_status:
         return JsonResponse({"numbers": [], "selected_numbers": []})
 
-    valid_numbers = list(Udhiyah.objects.filter(status=previous_status).values_list("serial_number", flat=True))
-    selected_numbers = list(Udhiyah.objects.filter(status=status).values_list("serial_number", flat=True))
+    # فقط الأضاحي اللي حالتها السابقة مطابقة
+    valid_numbers = list(
+        Udhiya.objects.filter(status=previous_status).values_list("serial_number", flat=True)
+    )
+
+    # الأضاحي اللي حالياً حالتها مطابقة للحالة المطلوبة (عشان تظهر كـ selected)
+    selected_numbers = list(
+        Udhiya.objects.filter(status=status).values_list("serial_number", flat=True)
+    )
 
     return JsonResponse({
         "numbers": valid_numbers,
         "selected_numbers": selected_numbers
     })
+
 
 # -------------------------------
 # صفحات الحالات - لوحة المشرف
