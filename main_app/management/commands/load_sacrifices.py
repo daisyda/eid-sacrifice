@@ -13,6 +13,10 @@ class Command(BaseCommand):
         created = 0
         skipped = 0
 
+        # ✅ Step 1: Delete all existing records
+        Udhiyah.objects.all().delete()
+        self.stdout.write(self.style.WARNING("🧹 Existing Udhiyah records deleted."))
+
         try:
             with open(filepath, newline='', encoding='utf-8') as csvfile:
                 reader = csv.DictReader(csvfile)
@@ -31,9 +35,8 @@ class Command(BaseCommand):
                     except Exception as e:
                         skipped += 1
                         self.stdout.write(self.style.WARNING(f"❌ Skipped: {e} — {row}"))
-
         except FileNotFoundError:
-            self.stdout.write(self.style.ERROR(f"File not found: {filepath}"))
+            self.stdout.write(self.style.ERROR(f"❌ File not found: {filepath}"))
             return
 
         self.stdout.write(self.style.SUCCESS(f"✅ Done. Created: {created}, Skipped: {skipped}"))
