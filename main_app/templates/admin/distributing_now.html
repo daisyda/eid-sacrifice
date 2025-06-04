@@ -103,128 +103,133 @@
   </div>
 
   <script>
-    function getCookie(name) {
-      let cookieValue = null;
-      if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-          const cookie = cookies[i].trim();
-          if (cookie.substring(0, name.length + 1) === (name + '=')) {
-            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-            break;
+  function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  async function createSections() {
+    const status = "slaughtered";
+    localStorage.setItem("selectedStatus", status);
+
+    const response = await fetch('/api/numbers/?status=' + status);
+    const data = await response.json();
+
+    const container = document.getElementById("sacrifice-sections");
+    container.innerHTML = "";
+
+    if (!data.numbers || data.numbers.length === 0) {
+      container.innerHTML = "لا توجد أضاحي لهذه الحالة.";
+      return;
+    }
+
+    const selectedNumbers = data.selected_numbers || [];
+
+    const grouped = { "نـعـيـمـي": [], "ســاكـنـي": [], "بـربـري": [] };
+
+    data.numbers.forEach(num => {
+      const n = parseInt(num);
+      if (n >= 100 && n < 200) {
+        grouped["نـعـيـمـي"].push(num);
+      } else if (n >= 200 && n < 300) {
+        grouped["ســاكـنـي"].push(num);
+      } else if (n >= 300) {
+        grouped["بـربـري"].push(num);
+      }
+    });
+
+    Object.entries(grouped).forEach(([typeName, nums]) => {
+      if (nums.length > 0) {
+        const section = document.createElement("div");
+        section.className = "section";
+
+        const title = document.createElement("h3");
+        title.textContent = typeName;
+        section.appendChild(title);
+
+        const wrapper = document.createElement("div");
+        wrapper.className = "numbers";
+
+        nums.forEach(num => {
+          const label = document.createElement("label");
+          label.className = "checkbox-label";
+
+          const checkbox = document.createElement("input");
+          checkbox.type = "checkbox";
+          checkbox.value = num;
+
+          const span = document.createElement("span");
+          span.textContent = num;
+
+          if (selectedNumbers.includes(parseInt(num))) {
+            checkbox.checked = true;
+            checkbox.disabled = true;
           }
-        }
+
+          label.appendChild(checkbox);
+          label.appendChild(span);
+          wrapper.appendChild(label);
+        });
+
+        section.appendChild(wrapper);
+        container.appendChild(section);
+        container.appendChild(document.createElement("hr"));
       }
-      return cookieValue;
-    }
+    });
+  }
 
-    async function createSections() {
-      const status = "distributing";  // ✅ Internal backend value
-      localStorage.setItem("selectedStatus", status);
+  function updateStatus() {
+    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+    const selected = [];
 
-      const response = await fetch('/api/numbers/?status=' + status);
-      const data = await response.json();
-
-      const container = document.getElementById("sacrifice-sections");
-      container.innerHTML = "";
-
-      if (!data.numbers || data.numbers.length === 0) {
-        container.innerHTML = "لا توجد أضاحي لهذه الحالة.";
-        return;
+    checkboxes.forEach(cb => {
+      if (cb.checked && !cb.disabled) {
+        selected.push(parseInt(cb.value));
       }
+    });
 
-      const selectedNumbers = data.selected_numbers || [];
+    const status = localStorage.getItem("selectedStatus") || "slaughtered";
+    document.getElementById("status-message").textContent = "✅ تم التحديث";
 
-      const grouped = { "100": [], "200": [], "300": [] };
-      data.numbers.forEach(num => {
-        const group = Math.floor(parseInt(num) / 100) * 100;
-        if (group === 100 || group === 200 || group === 300) {
-          grouped[group].push(num);
-        }
-      });
+    fetch('/api/update-status/', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': getCookie('csrftoken')
+      },
+      body: JSON.stringify({ numbers: selected, status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        checkboxes.forEach(cb => {
+          if (selected.includes(parseInt(cb.value))) {
+            cb.disabled = true;
+          }
+        });
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+      document.getElementById("status-message").textContent = "❌ فشل الاتصال بالخادم";
+    });
+  }
 
-      Object.entries(grouped).forEach(([group, nums]) => {
-        if (nums.length > 0) {
-          const section = document.createElement("div");
-          section.className = "section";
+  function goBack() {
+    window.location.href = "/panel/choose-status/";
+  }
 
-          const title = document.createElement("h3");
-          title.textContent = group;
-          section.appendChild(title);
-
-          const wrapper = document.createElement("div");
-          wrapper.className = "numbers";
-
-          nums.forEach(num => {
-            const label = document.createElement("label");
-            label.className = "checkbox-label";
-
-            const checkbox = document.createElement("input");
-            checkbox.type = "checkbox";
-            checkbox.value = num;
-
-            const span = document.createElement("span");
-            span.textContent = num;
-
-            if (selectedNumbers.includes(parseInt(num))) {
-              checkbox.checked = true;
-              checkbox.disabled = true;
-            }
-
-            label.appendChild(checkbox);
-            label.appendChild(span);
-            wrapper.appendChild(label);
-          });
-
-          section.appendChild(wrapper);
-          container.appendChild(section);
-          container.appendChild(document.createElement("hr"));
-        }
-      });
-    }
-
-    function updateStatus() {
-      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-      const selected = [];
-
-      checkboxes.forEach(cb => {
-        if (cb.checked && !cb.disabled) {
-          selected.push(parseInt(cb.value));
-        }
-      });
-
-      const status = localStorage.getItem("selectedStatus") || "distributing";
-      document.getElementById("status-message").textContent = "✅ تم التحديث";
-
-      fetch('/api/update-status/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': getCookie('csrftoken')
-        },
-        body: JSON.stringify({ numbers: selected, status: status })
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.success) {
-          checkboxes.forEach(cb => {
-            if (selected.includes(parseInt(cb.value))) {
-              cb.disabled = true;
-            }
-          });
-        }
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        document.getElementById("status-message").textContent = "❌ فشل الاتصال بالخادم";
-      });
-    }
-
-    function goBack() {
-      window.location.href = "/panel/choose-status/";
-    }
-
-    createSections();
-  </script>
+  createSections();
+</script>
 </body>
 </html>
