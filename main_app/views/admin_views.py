@@ -10,7 +10,7 @@ from ..models import Udhiyah
 import json
 import os
 
-# ✅ فقط للمشرفين
+# ✅ فقط للمستخدمين المشرفين
 def staff_required(view_func):
     return user_passes_test(lambda u: u.is_authenticated and u.is_staff, login_url='admin_login')(view_func)
 
@@ -29,15 +29,13 @@ def admin_login_view(request):
 
     return render(request, 'admin/admin_login.html')
 
-
-# ✅ صفحة قائمة الأضاحي
+# ✅ عرض كل الأضاحي (لوحة التحكم)
 @staff_required
 def udhiya_list(request):
     udhiyas = Udhiyah.objects.all()
     return render(request, 'admin/udhiyah_list.html', {'udhiyas': udhiyas})
 
-
-# ✅ تحديث الحالة
+# ✅ تحديث حالة الأضاحي
 @csrf_exempt
 @staff_required
 def update_status(request):
@@ -47,53 +45,50 @@ def update_status(request):
         status_value = data.get('status', '')
 
         if not status_value:
-            return JsonResponse({"error": "لا توجد حالة محددة"}, status=400)
+            return JsonResponse({"error": "❌ لم يتم تحديد الحالة."}, status=400)
 
         Udhiyah.objects.filter(serial_number__in=numbers).update(status=status_value)
-        return JsonResponse({"success": True})
+        return JsonResponse({"success": True, "message": "✅ تم تحديث الحالة بنجاح."})
 
-    return JsonResponse({"error": "Invalid request"}, status=400)
+    return JsonResponse({"error": "❌ الطلب غير صالح."}, status=400)
 
-
-# ✅ اختيار رقم
+# ✅ اختيار رقم أو حالة
 @staff_required
 def choose_number(request):
     return render(request, 'admin/choose_number.html')
 
-
-# ✅ اختيار حالة
 @staff_required
 def choose_status(request):
     return render(request, 'admin/choose_status.html')
 
-
-# ✅ جلب الأرقام للحالة حسب التسلسل الصحيح
+# ✅ إظهار أرقام الأضاحي حسب الحالة المنطقية
 @staff_required
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
 
     # التسلسل المنطقي للحالات
     status_flow = {
-        "تم الذبح": "تم حجز الأضحية",
-        "تم التقطيع": "تم الذبح",
-        "جاري التوزيع": "تم التقطيع",
-        "تم التوزيع": "جاري التوزيع",
+        "slaughtered": "booked",
+        "cut": "slaughtered",
+        "distributing_now": "cut",
+        "distributed": "distributing_now",
     }
 
     previous_status = status_flow.get(status)
     if not previous_status:
         return JsonResponse({"numbers": [], "selected_numbers": []})
 
-    # الأرقام الجاهزة تنتقل للحالة الجديدة
+    # ✅ الأرقام المؤهلة لتحديث الحالة (حسب الحالة السابقة)
     valid_numbers = list(
         Udhiyah.objects.filter(status=previous_status).values_list("serial_number", flat=True)
     )
 
-    # الأرقام اللي أصلاً في الحالة المطلوبة (عشان تظهر كمختارة)
+    # ✅ الأرقام اللي حالتها حالياً نفس الصفحة
     selected_numbers = list(
         Udhiyah.objects.filter(status=status).values_list("serial_number", flat=True)
     )
 
+    # ✅ دمجهم مع بعض بدون تكرار
     all_displayed = list(set(valid_numbers + selected_numbers))
 
     return JsonResponse({
@@ -101,56 +96,48 @@ def get_sacrifice_numbers(request):
         "selected_numbers": selected_numbers
     })
 
-
-# ✅ صفحة: تم الذبح
+# ✅ صفحات الحالات
 @staff_required
 def page_slaughtered(request):
-    udhiyas = Udhiyah.objects.filter(status="تم حجز الأضحية")
+    udhiyas = Udhiyah.objects.filter(status="booked")
     return render(request, 'admin/slaughtered.html', {
-        "status": "تم الذبح",
+        "status": "slaughtered",
         "udhiyas": udhiyas
     })
 
-
-# ✅ صفحة: تم التقطيع
 @staff_required
 def page_Cut(request):
-    udhiyas = Udhiyah.objects.filter(status="تم الذبح")
+    udhiyas = Udhiyah.objects.filter(status="slaughtered")
     return render(request, 'admin/cut.html', {
-        "status": "تم التقطيع",
+        "status": "cut",
         "udhiyas": udhiyas
     })
 
-
-# ✅ صفحة: جاري التوزيع
 @staff_required
 def page_Distributing_Now(request):
-    udhiyas = Udhiyah.objects.filter(status="تم التقطيع")
+    udhiyas = Udhiyah.objects.filter(status="cut")
     return render(request, 'admin/distributing_now.html', {
-        "status": "جاري التوزيع",
+        "status": "distributing_now",
         "udhiyas": udhiyas
     })
 
-
-# ✅ صفحة: تم التوزيع
 @staff_required
 def page_Distributing_Done(request):
-    udhiyas = Udhiyah.objects.filter(status="جاري التوزيع")
+    udhiyas = Udhiyah.objects.filter(status="distributing_now")
     return render(request, 'admin/distribution_done.html', {
-        "status": "تم التوزيع",
+        "status": "distributed",
         "udhiyas": udhiyas
     })
 
-
-# ✅ تحميل البيانات من CSV
+# ✅ تحميل الأضاحي من CSV
 @staff_required
 def run_load_sacrifices(request):
     try:
         filepath = os.path.join(settings.BASE_DIR, 'sacrifices.csv')
         if not os.path.exists(filepath):
-            return HttpResponse("❌ ملف sacrifices.csv غير موجود")
+            return HttpResponse("❌ لم يتم العثور على الملف: sacrifices.csv")
 
         call_command('load_sacrifices', filepath)
-        return HttpResponse("✅ تم تحميل الأضاحي بنجاح")
+        return HttpResponse("✅ تم تحميل الأضاحي بنجاح.")
     except Exception as e:
         return HttpResponse(f"❌ خطأ: {str(e)}")
