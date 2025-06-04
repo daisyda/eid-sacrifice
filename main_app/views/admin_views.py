@@ -3,13 +3,16 @@ from django.contrib.auth import authenticate, login
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse, HttpResponse
-from django.contrib.auth.decorators import login_required
-from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import user_passes_test
 from django.core.management import call_command
 from django.conf import settings
 from ..models import Udhiyah
 import json
 import os
+
+# ✅ ديكوريتر مخصص يسمح فقط للمشرفين
+def staff_required(view_func):
+    return user_passes_test(lambda u: u.is_authenticated and u.is_staff, login_url='admin_login')(view_func)
 
 # -------------------------------
 # ✅ تسجيل دخول المشرف
@@ -22,7 +25,7 @@ def admin_login_view(request):
 
         if user is not None and user.is_staff:
             login(request, user)
-            return redirect('choose_status')  # أو غيريها لأي صفحة لوحة تحكم تبينها
+            return redirect('choose_status')
         else:
             messages.error(request, 'اسم المستخدم أو كلمة المرور غير صحيحة، أو الحساب ليس مشرفاً.')
 
@@ -32,11 +35,13 @@ def admin_login_view(request):
 # -------------------------------
 # واجهات المشرف الخاصة بالأضاحي
 # -------------------------------
+@staff_required
 def udhiya_list(request):
     udhiyas = Udhiyah.objects.all()
     return render(request, 'admin/udhiyah_list.html', {'udhiyas': udhiyas})
 
 @csrf_exempt
+@staff_required
 def update_status(request):
     if request.method == 'POST':
         data = json.loads(request.body)
@@ -51,12 +56,15 @@ def update_status(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+@staff_required
 def choose_number(request):
     return render(request, 'admin/choose_number.html')
 
+@staff_required
 def choose_status(request):
     return render(request, 'admin/choose_status.html')
 
+@staff_required
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
     required_previous = {
@@ -82,7 +90,7 @@ def get_sacrifice_numbers(request):
 # -------------------------------
 # صفحات الحالات - لوحة المشرف
 # -------------------------------
-@login_required
+@staff_required
 def page_slaughtered(request):
     udhiyas = Udhiyah.objects.filter(status="booked")
     return render(request, 'admin/slaughtered.html', {
@@ -90,7 +98,7 @@ def page_slaughtered(request):
         "udhiyas": udhiyas
     })
 
-@login_required
+@staff_required
 def page_Cut(request):
     udhiyas = Udhiyah.objects.filter(status="slaughtered")
     return render(request, 'admin/cut.html', {
@@ -98,7 +106,7 @@ def page_Cut(request):
         "udhiyas": udhiyas
     })
 
-@login_required
+@staff_required
 def page_Distributing_Now(request):
     udhiyas = Udhiyah.objects.filter(status="cutting")
     return render(request, 'admin/distributing_now.html', {
@@ -106,7 +114,7 @@ def page_Distributing_Now(request):
         "udhiyas": udhiyas
     })
 
-@login_required
+@staff_required
 def page_Distributing_Done(request):
     udhiyas = Udhiyah.objects.filter(status="distributing")
     return render(request, 'admin/distribution_done.html', {
@@ -117,7 +125,7 @@ def page_Distributing_Done(request):
 # -------------------------------
 # تحميل البيانات من ملف CSV
 # -------------------------------
-@staff_member_required
+@staff_required
 def run_load_sacrifices(request):
     try:
         filepath = os.path.join(settings.BASE_DIR, 'sacrifices.csv')
