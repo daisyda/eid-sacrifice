@@ -63,40 +63,41 @@ def choose_status(request):
 
 # ✅ إظهار أرقام الأضاحي حسب الحالة المنطقية
 @staff_required
-@staff_required
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
 
-    # التسلسل المنطقي للحالات
+    # التسلسل المنطقي للحالات بناءً على الداتا
     status_flow = {
-        "slaughtered": "booked",            # تظهر فقط اللي حالتها "تم الحجز"
-        "cut": "slaughtered",               # تظهر فقط اللي حالتها "تم الذبح"
-        "distributing_now": "cut",          # تظهر فقط اللي حالتها "تم التقطيع"
-        "distributed": "distributing_now",  # تظهر فقط اللي حالتها "جاري التوزيع"
+        "slaughtered": "تم حجز الأضحية",     # تظهر فقط اللي حالتها "تم حجز الأضحية"
+        "cut": "slaughtered",                # تظهر اللي حالتها "slaughtered"
+        "distributing_now": "cut",           # تظهر اللي حالتها "cut"
+        "distributed": "distributing_now",   # تظهر اللي حالتها "distributing_now"
     }
 
     previous_status = status_flow.get(status)
     if not previous_status:
         return JsonResponse({"numbers": [], "selected_numbers": []})
 
-    # نرجع فقط الأضاحي اللي حالتها السابقة هي المطلوبة
+    # الأضاحي المؤهلة للانتقال للحالة الحالية
     valid_numbers = list(
         Udhiyah.objects.filter(status=previous_status).values_list("serial_number", flat=True)
     )
 
-    # ما نعرض الأرقام اللي حالتها وصلت بالفعل للـ status الحالي
-    selected_numbers = []
+    # الأرقام اللي وصلت فعلًا للحالة الحالية (عشان تتشطب)
+    selected_numbers = list(
+        Udhiyah.objects.filter(status=status).values_list("serial_number", flat=True)
+    )
 
     return JsonResponse({
         "numbers": valid_numbers,
         "selected_numbers": selected_numbers
     })
 
-
 # ✅ صفحات الحالات
+
 @staff_required
 def page_slaughtered(request):
-    udhiyas = Udhiyah.objects.filter(status="booked")
+    udhiyas = Udhiyah.objects.filter(status="تم حجز الأضحية")
     return render(request, 'admin/slaughtered.html', {
         "status": "slaughtered",
         "udhiyas": udhiyas
