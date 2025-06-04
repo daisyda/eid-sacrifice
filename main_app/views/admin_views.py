@@ -61,29 +61,29 @@ def choose_number(request):
 def choose_status(request):
     return render(request, 'admin/choose_status.html')
 
-# ✅ إظهار أرقام الأضاحي حسب الحالة المنطقية
+# ✅ عرض الأرقام المؤهلة فقط بناءً على الحالة السابقة
 @staff_required
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
 
-    # التسلسل المنطقي للحالات بناءً على الداتا
+    # التسلسل المنطقي للحالات (بالعربي)
     status_flow = {
-        "slaughtered": "تم حجز الأضحية",     # تظهر فقط اللي حالتها "تم حجز الأضحية"
-        "cut": "slaughtered",                # تظهر اللي حالتها "slaughtered"
-        "distributing_now": "cut",           # تظهر اللي حالتها "cut"
-        "distributed": "distributing_now",   # تظهر اللي حالتها "distributing_now"
+        "تم الذبح": "تم حجز الأضحية",
+        "تم التقطيع": "تم الذبح",
+        "جاري التوزيع": "تم التقطيع",
+        "تم التوزيع": "جاري التوزيع",
     }
 
     previous_status = status_flow.get(status)
     if not previous_status:
         return JsonResponse({"numbers": [], "selected_numbers": []})
 
-    # الأضاحي المؤهلة للانتقال للحالة الحالية
+    # الأضاحي الجاهزة للانتقال للحالة الحالية
     valid_numbers = list(
         Udhiyah.objects.filter(status=previous_status).values_list("serial_number", flat=True)
     )
 
-    # الأرقام اللي وصلت فعلًا للحالة الحالية (عشان تتشطب)
+    # الأضاحي اللي حالتها بالفعل تم نقلها للحالة الحالية (عشان تتشطب)
     selected_numbers = list(
         Udhiyah.objects.filter(status=status).values_list("serial_number", flat=True)
     )
@@ -96,34 +96,34 @@ def get_sacrifice_numbers(request):
 # ✅ صفحات الحالات
 
 @staff_required
-def page_slaughtered(request):
+def page_slaughtered(request):  # تم الذبح
     udhiyas = Udhiyah.objects.filter(status="تم حجز الأضحية")
     return render(request, 'admin/slaughtered.html', {
-        "status": "slaughtered",
+        "status": "تم الذبح",
         "udhiyas": udhiyas
     })
 
 @staff_required
-def page_Cut(request):
-    udhiyas = Udhiyah.objects.filter(status="slaughtered")
+def page_Cut(request):  # تم التقطيع
+    udhiyas = Udhiyah.objects.filter(status="تم الذبح")
     return render(request, 'admin/cut.html', {
-        "status": "cut",
+        "status": "تم التقطيع",
         "udhiyas": udhiyas
     })
 
 @staff_required
-def page_Distributing_Now(request):
-    udhiyas = Udhiyah.objects.filter(status="cut")
+def page_Distributing_Now(request):  # جاري التوزيع
+    udhiyas = Udhiyah.objects.filter(status="تم التقطيع")
     return render(request, 'admin/distributing_now.html', {
-        "status": "distributing_now",
+        "status": "جاري التوزيع",
         "udhiyas": udhiyas
     })
 
 @staff_required
-def page_Distributing_Done(request):
-    udhiyas = Udhiyah.objects.filter(status="distributing_now")
+def page_Distributing_Done(request):  # تم التوزيع
+    udhiyas = Udhiyah.objects.filter(status="جاري التوزيع")
     return render(request, 'admin/distribution_done.html', {
-        "status": "distributed",
+        "status": "تم التوزيع",
         "udhiyas": udhiyas
     })
 
