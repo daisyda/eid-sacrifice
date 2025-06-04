@@ -16,7 +16,7 @@
             background-color: #fff;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 15px 30px -10px rgba(0, 0, 0, 0.1);
             text-align: right;
         }
 
@@ -24,7 +24,7 @@
             text-align: center;
             margin-bottom: 30px;
             font-size: 24px;
-            color: #333;
+            color: #7c0a27;
         }
 
         .login-form label {
@@ -37,23 +37,42 @@
             width: 100%;
             padding: 12px;
             margin-bottom: 20px;
-            border: 1px solid #ccc;
+            background-color: #f5eecf;
+            border: none;
             border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .password-wrapper {
+            position: relative;
+        }
+
+        .toggle-password {
+            position: absolute;
+            top: 50%;
+            left: 10px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
         }
 
         .login-form button {
             width: 100%;
             padding: 12px;
-            background-color: #4CAF50;
+            background-color: #96173f;
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 16px;
             font-size: 16px;
+            font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
         }
 
         .login-form button:hover {
-            background-color: #45a049;
+            background-color: #7a1132;
         }
 
         .error-messages {
@@ -72,7 +91,10 @@
             <input type="text" name="username" id="username" required>
 
             <label for="password">كلمة المرور</label>
-            <input type="password" name="password" id="password" required>
+            <div class="password-wrapper">
+                <input type="password" name="password" id="password" required>
+                <button type="button" class="toggle-password" onclick="togglePassword()">👁️</button>
+            </div>
 
             <button type="submit">دخول</button>
 
@@ -85,5 +107,13 @@
             {% endif %}
         </form>
     </div>
+
+    <script>
+        function togglePassword() {
+            const passwordInput = document.getElementById("password");
+            const type = passwordInput.getAttribute("type") === "password" ? "text" : "password";
+            passwordInput.setAttribute("type", type);
+        }
+    </script>
 </body>
 </html>
