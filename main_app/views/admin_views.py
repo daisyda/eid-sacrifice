@@ -10,7 +10,7 @@ from ..models import Udhiyah
 import json
 import os
 
-# ✅ فقط للمستخدمين المشرفين
+# ✅ السماح فقط للمشرفين
 def staff_required(view_func):
     return user_passes_test(lambda u: u.is_authenticated and u.is_staff, login_url='admin_login')(view_func)
 
@@ -29,7 +29,7 @@ def admin_login_view(request):
 
     return render(request, 'admin/admin_login.html')
 
-# ✅ عرض كل الأضاحي
+# ✅ عرض جميع الأضاحي
 @staff_required
 def udhiya_list(request):
     udhiyas = Udhiyah.objects.all()
@@ -61,17 +61,16 @@ def choose_number(request):
 def choose_status(request):
     return render(request, 'admin/choose_status.html')
 
-# ✅ عرض الأرقام المؤهلة فقط حسب الحالة السابقة
+# ✅ إرجاع الأرقام الجاهزة للتحديث حسب التسلسل المنطقي
 @staff_required
 def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
 
-    # التسلسل المنطقي للحالات
     status_flow = {
-        "slaughtered": "booked",
-        "cut": "slaughtered",
-        "distributing_now": "cut",
-        "distributed": "distributing_now",
+        "slaughtered": "booked",              # الذبح ← الحجوزات
+        "cut": "slaughtered",                 # التقطيع ← الذبح
+        "distributing_now": "cut",            # جاري التوزيع ← التقطيع
+        "distributed": "distributing_now",    # تم التوزيع ← جاري التوزيع
     }
 
     previous_status = status_flow.get(status)
@@ -91,9 +90,9 @@ def get_sacrifice_numbers(request):
         "selected_numbers": selected_numbers
     })
 
-# ✅ صفحات الحالات (كل صفحة تعرض فقط الأضاحي بالحالة المطلوبة)
+# ✅ صفحات الحالات - كل صفحة تعرض الحالة السابقة فقط
 @staff_required
-def page_slaughtered(request):  # حالة "booked"
+def page_slaughtered(request):  # الذبح ← اللي حالتها booked
     udhiyas = Udhiyah.objects.filter(status="booked")
     return render(request, 'admin/slaughtered.html', {
         "status": "slaughtered",
@@ -101,7 +100,7 @@ def page_slaughtered(request):  # حالة "booked"
     })
 
 @staff_required
-def page_Cut(request):  # حالة "slaughtered"
+def page_Cut(request):  # التقطيع ← اللي حالتها slaughtered
     udhiyas = Udhiyah.objects.filter(status="slaughtered")
     return render(request, 'admin/cut.html', {
         "status": "cut",
@@ -109,7 +108,7 @@ def page_Cut(request):  # حالة "slaughtered"
     })
 
 @staff_required
-def page_Distributing_Now(request):  # حالة "cut"
+def page_Distributing_Now(request):  # جاري التوزيع ← اللي حالتها cut
     udhiyas = Udhiyah.objects.filter(status="cut")
     return render(request, 'admin/distributing_now.html', {
         "status": "distributing_now",
@@ -117,14 +116,14 @@ def page_Distributing_Now(request):  # حالة "cut"
     })
 
 @staff_required
-def page_Distributing_Done(request):  # حالة "distributing_now"
+def page_Distributing_Done(request):  # تم التوزيع ← اللي حالتها distributing_now
     udhiyas = Udhiyah.objects.filter(status="distributing_now")
     return render(request, 'admin/distribution_done.html', {
         "status": "distributed",
         "udhiyas": udhiyas
     })
 
-# ✅ تحميل الأضاحي من CSV
+# ✅ تحميل الأضاحي من ملف CSV
 @staff_required
 def run_load_sacrifices(request):
     try:
