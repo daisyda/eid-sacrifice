@@ -139,23 +139,24 @@
       const container = document.getElementById("sacrifice-sections");
       container.innerHTML = "";
 
-      if (!data.numbers || data.numbers.length === 0) {
+      if (!data.numbers && !data.selected_numbers) {
         container.innerHTML = "لا توجد أضاحي لهذه الحالة.";
         return;
       }
 
       const selectedNumbers = data.selected_numbers || [];
+      const combined = [...new Set([...(data.numbers || []), ...selectedNumbers])];
+      combined.sort((a, b) => a - b);
 
       const grouped = { "نـعـيـمـي": [], "ســاكـنـي": [], "بـربـري": [] };
-
-      data.numbers.forEach(num => {
+      combined.forEach(num => {
         const n = parseInt(num);
         if (n >= 100 && n < 200) {
-          grouped["نـعـيـمـي"].push(num);
+          grouped["نـعـيـمـي"].push(n);
         } else if (n >= 200 && n < 300) {
-          grouped["ســاكـنـي"].push(num);
+          grouped["ســاكـنـي"].push(n);
         } else if (n >= 300) {
-          grouped["بـربـري"].push(num);
+          grouped["بـربـري"].push(n);
         }
       });
 
@@ -182,7 +183,7 @@
             const span = document.createElement("span");
             span.textContent = num;
 
-            if (selectedNumbers.includes(parseInt(num))) {
+            if (selectedNumbers.includes(num)) {
               checkbox.checked = true;
               checkbox.disabled = true;
             }
@@ -222,7 +223,7 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          createSections(); // ✅ إعادة بناء الصفحة بعد التحديث
+          createSections(); // ✅ إعادة تحميل الصفحة بعد التحديث
         }
       })
       .catch(error => {

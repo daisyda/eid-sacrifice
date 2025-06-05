@@ -140,16 +140,19 @@
       const container = document.getElementById("sacrifice-sections");
       container.innerHTML = "";
 
-      if (!data.numbers || data.numbers.length === 0) {
+      if ((!data.numbers || data.numbers.length === 0) && (!data.selected_numbers || data.selected_numbers.length === 0)) {
         container.innerHTML = "لا توجد أضاحي لهذه الحالة.";
         return;
       }
+
+      const allNumbers = [...new Set([...(data.numbers || []), ...(data.selected_numbers || [])])];
+      allNumbers.sort((a, b) => a - b);
 
       const selectedNumbers = data.selected_numbers || [];
 
       const grouped = { "نـعـيـمـي": [], "ســاكـنـي": [], "بـربـري": [] };
 
-      data.numbers.forEach(num => {
+      allNumbers.forEach(num => {
         const n = parseInt(num);
         if (n >= 100 && n < 200) {
           grouped["نـعـيـمـي"].push(num);
@@ -223,7 +226,7 @@
       .then(response => response.json())
       .then(data => {
         if (data.success) {
-          createSections(); // ✅ إعادة تحميل بعد التحديث
+          createSections(); // إعادة تحميل بعد التحديث
         }
       })
       .catch(error => {
@@ -236,8 +239,8 @@
       window.location.href = "/panel/choose-status/";
     }
 
-    createSections();                   // تحميل أولي
-    setInterval(createSections, 30000); // ✅ تحديث تلقائي كل 30 ثانية
+    createSections(); // تحميل أولي
+    setInterval(createSections, 30000); // تحديث تلقائي كل 30 ثانية
   </script>
 </body>
 </html>
