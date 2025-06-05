@@ -89,7 +89,7 @@
 </head>
 <body>
   <div class="container">
-    <h2>الأضاحي - تم التوزيع</h2>
+    <h2 id="status-title">الأضاحي - تم التوزيع</h2>
     <hr>
 
     <div id="sacrifice-sections">جاري تحميل الأرقام...</div>
@@ -102,134 +102,141 @@
     <div id="status-message"></div>
   </div>
 
- <script>
-  function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
+  <script>
+    const status = "done";
+    const statusNames = {
+      paid: "تم الدفع",
+      booked: "تم حجز الأضحية",
+      slaughtered: "تم الذبح",
+      cutting: "تم التقطيع",
+      half_ready: "نصف الأضحية جاهز للاستلام",
+      distributing: "جاري التوزيع",
+      done: "تم التوزيع"
+    };
+
+    document.getElementById("status-title").textContent = "الأضاحي - " + statusNames[status];
+
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
         }
       }
-    }
-    return cookieValue;
-  }
-
-  async function createSections() {
-    const status = "slaughtered";
-    localStorage.setItem("selectedStatus", status);
-
-    const response = await fetch('/api/numbers/?status=' + status);
-    const data = await response.json();
-
-    const container = document.getElementById("sacrifice-sections");
-    container.innerHTML = "";
-
-    if (!data.numbers || data.numbers.length === 0) {
-      container.innerHTML = "لا توجد أضاحي لهذه الحالة.";
-      return;
+      return cookieValue;
     }
 
-    const selectedNumbers = data.selected_numbers || [];
+    async function createSections() {
+      localStorage.setItem("selectedStatus", status);
+      const response = await fetch('/api/numbers/?status=' + status);
+      const data = await response.json();
 
-    const grouped = { "نـعـيـمـي": [], "ســاكـنـي": [], "بـربـري": [] };
+      const container = document.getElementById("sacrifice-sections");
+      container.innerHTML = "";
 
-    data.numbers.forEach(num => {
-      const n = parseInt(num);
-      if (n >= 100 && n < 200) {
-        grouped["نـعـيـمـي"].push(num);
-      } else if (n >= 200 && n < 300) {
-        grouped["ســاكـنـي"].push(num);
-      } else if (n >= 300) {
-        grouped["بـربـري"].push(num);
+      if (!data.numbers || data.numbers.length === 0) {
+        container.innerHTML = "لا توجد أضاحي لهذه الحالة.";
+        return;
       }
-    });
 
-    Object.entries(grouped).forEach(([typeName, nums]) => {
-      if (nums.length > 0) {
-        const section = document.createElement("div");
-        section.className = "section";
+      const selectedNumbers = data.selected_numbers || [];
 
-        const title = document.createElement("h3");
-        title.textContent = typeName;
-        section.appendChild(title);
+      const grouped = { "نـعـيـمـي": [], "ســاكـنـي": [], "بـربـري": [] };
 
-        const wrapper = document.createElement("div");
-        wrapper.className = "numbers";
+      data.numbers.forEach(num => {
+        const n = parseInt(num);
+        if (n >= 100 && n < 200) {
+          grouped["نـعـيـمـي"].push(num);
+        } else if (n >= 200 && n < 300) {
+          grouped["ســاكـنـي"].push(num);
+        } else if (n >= 300) {
+          grouped["بـربـري"].push(num);
+        }
+      });
 
-        nums.forEach(num => {
-          const label = document.createElement("label");
-          label.className = "checkbox-label";
+      Object.entries(grouped).forEach(([typeName, nums]) => {
+        if (nums.length > 0) {
+          const section = document.createElement("div");
+          section.className = "section";
 
-          const checkbox = document.createElement("input");
-          checkbox.type = "checkbox";
-          checkbox.value = num;
+          const title = document.createElement("h3");
+          title.textContent = typeName;
+          section.appendChild(title);
 
-          const span = document.createElement("span");
-          span.textContent = num;
+          const wrapper = document.createElement("div");
+          wrapper.className = "numbers";
 
-          if (selectedNumbers.includes(parseInt(num))) {
-            checkbox.checked = true;
-            checkbox.disabled = true;
-          }
+          nums.forEach(num => {
+            const label = document.createElement("label");
+            label.className = "checkbox-label";
 
-          label.appendChild(checkbox);
-          label.appendChild(span);
-          wrapper.appendChild(label);
-        });
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.value = num;
 
-        section.appendChild(wrapper);
-        container.appendChild(section);
-        container.appendChild(document.createElement("hr"));
-      }
-    });
-  }
+            const span = document.createElement("span");
+            span.textContent = num;
 
-  function updateStatus() {
-    const checkboxes = document.querySelectorAll('input[type="checkbox"]');
-    const selected = [];
+            if (selectedNumbers.includes(parseInt(num))) {
+              checkbox.checked = true;
+              checkbox.disabled = true;
+            }
 
-    checkboxes.forEach(cb => {
-      if (cb.checked && !cb.disabled) {
-        selected.push(parseInt(cb.value));
-      }
-    });
+            label.appendChild(checkbox);
+            label.appendChild(span);
+            wrapper.appendChild(label);
+          });
 
-    const status = localStorage.getItem("selectedStatus") || "slaughtered";
-    document.getElementById("status-message").textContent = "✅ تم التحديث";
+          section.appendChild(wrapper);
+          container.appendChild(section);
+          container.appendChild(document.createElement("hr"));
+        }
+      });
+    }
 
-    fetch('/api/update-status/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-CSRFToken': getCookie('csrftoken')
-      },
-      body: JSON.stringify({ numbers: selected, status: status })
-    })
-    .then(response => response.json())
-    .then(data => {
-      if (data.success) {
-        checkboxes.forEach(cb => {
-          if (selected.includes(parseInt(cb.value))) {
-            cb.disabled = true;
-          }
-        });
-      }
-    })
-    .catch(error => {
-      console.error('Error:', error);
-      document.getElementById("status-message").textContent = "❌ فشل الاتصال بالخادم";
-    });
-  }
+    function updateStatus() {
+      const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+      const selected = [];
 
-  function goBack() {
-    window.location.href = "/panel/choose-status/";
-  }
+      checkboxes.forEach(cb => {
+        if (cb.checked && !cb.disabled) {
+          selected.push(parseInt(cb.value));
+        }
+      });
 
-  createSections();
-</script>
+      document.getElementById("status-message").textContent = "✅ تم التحديث";
+
+      fetch('/api/update-status/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': getCookie('csrftoken')
+        },
+        body: JSON.stringify({ numbers: selected, status: status })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          createSections(); // ✅ إعادة تحميل الأقسام بعد التحديث
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        document.getElementById("status-message").textContent = "❌ فشل الاتصال بالخادم";
+      });
+    }
+
+    function goBack() {
+      window.location.href = "/panel/choose-status/";
+    }
+
+    createSections();                   // تحميل أولي
+    setInterval(createSections, 30000); // ✅ تحديث تلقائي كل 30 ثانية
+  </script>
 </body>
 </html>

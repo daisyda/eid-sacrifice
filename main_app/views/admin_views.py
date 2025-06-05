@@ -67,10 +67,10 @@ def get_sacrifice_numbers(request):
     status = request.GET.get("status", "")
 
     status_flow = {
-        "slaughtered": "booked",              # الذبح ← الحجوزات
-        "cut": "slaughtered",                 # التقطيع ← الذبح
-        "distributing_now": "cut",            # جاري التوزيع ← التقطيع
-        "distributed": "distributing_now",    # تم التوزيع ← جاري التوزيع
+        "slaughtered": "booked",
+        "cutting": "slaughtered",
+        "distributing": "cutting",
+        "done": "distributing",
     }
 
     previous_status = status_flow.get(status)
@@ -89,6 +89,7 @@ def get_sacrifice_numbers(request):
         "numbers": valid_numbers,
         "selected_numbers": selected_numbers
     })
+
 
 # ✅ صفحات الحالات - كل صفحة تعرض الحالة السابقة فقط
 @staff_required
